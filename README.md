@@ -9,22 +9,19 @@
 
 ```
 teaching-tools/
-├── README.md                  # 本文件
-├── tools/                    # 通用教学小工具
-│   ├── excel-tools/          # Excel 批改/分析工具
-│   ├── grade-analysis/       # 成绩达成度分析工具
-│   └── h5-quiz/             # H5 在线测评工具
-├── arcpy-scripts/            # ArcPy 教学脚本实例
-│   ├── cursor-demo/         # 游标操作示例
-│   ├── raster-processing/    # 栅格处理示例
-│   └── toolbox-demos/        # 工具箱开发示例
-├── skills/                   # WorkBuddy 技能包
-│   ├── thesis-review/        # 毕业论文评审技能
-│   ├── syllabus-generator/   # 教学大纲生成技能
-│   └── lab-report/          # 实验报告批改技能
-└── docs/                    # 使用文档与教程
-    ├── arcpy-tutorial/       # ArcPy 教程笔记
-    └── lab-manuals/         # 实验指导书
+├── README.md                    # 本文件
+├── 达成度分析工具/              # 课程达成度分析 HTML 工具
+│   ├── 达成度分析工具v0.48.html   # 最新版（含AI报告生成）
+│   ├── 达成度分析工具v0.47.html   # 上一版
+│   ├── README.md                  # 工具说明与版本差异
+│   └── 用户使用手册.md
+├── H5评测工具/                 # 在线测评系统
+│   ├── README.md
+│   ├── 01-需求分析.md ~ 08-部署文档.md
+│   ├── src/                       # Express.js 前后端源码
+│   └── 题目库-完整版.json
+├── ArcPy脚本实例/              # （待上传）
+└── 技能包/                   # （待上传）
 ```
 
 ---
@@ -33,8 +30,8 @@ teaching-tools/
 
 | 工具 | 类型 | 说明 | 状态 |
 |------|------|------|------|
-| H5评测工具 | Web应用 | Express.js + HTML/CSS/JS 在线测评系统 | ✅ 完整 |
-| 课程达成度分析 | Python | 成绩数据分析与达成度计算 | 🟡 开发中 |
+| **达成度分析工具** | 单文件 HTML | 课程达成度计算 + AI 报告生成（v0.48） | ✅ 完整 |
+| **H5评测工具** | Web应用 | Express.js + HTML/CSS/JS 在线测评系统 | ✅ 完整 |
 | 毕业论文评审 | Skill | 自动评审本科毕设（双视角输出） | ✅ 可用 |
 | 教学大纲生成器 | Skill | 嘉应学院标准大纲自动生成 | ✅ 可用 |
 
@@ -42,19 +39,34 @@ teaching-tools/
 
 ## 🚀 快速使用
 
+### 达成度分析工具（HTML 单文件）
+
+无需安装，双击 `达成度分析工具v0.48.html` 用浏览器打开即可使用。
+
+**核心功能：**
+- 支持 Excel 成绩表导入（`.xlsx`）
+- 等级加权法（方案A）和权重分配法（方案B）两种计算模式
+- 多班级分班与合并分析
+- **v0.48 新增**：接入大模型 API，自动生成课程达成度分析报告
+
+**AI报告生成配置（v0.48新增）：**
+1. 在计算完成后，点击「AI生成达成度报告」
+2. 选择大模型平台（Agens AI / 通义千问 / DeepSeek / 智谱GLM / Kimi / 豆包 / 小米MiMo）
+3. 填入 API Key（Agens AI 可免 Key 使用）
+4. 点击「确认配置」→「开始生成」
+5. 等待 AI 生成报告，可导出打印
+
+> ⚠️ **注意**：AI报告生成需要自行申请对应平台的 API Key。Agens AI 提供免费额度，无需配置 Key 即可试用。
+
+---
+
 ### H5 在线测评工具
+
 ```bash
-cd tools/h5-quiz
+cd H5评测工具
 npm install
 npm start
 # 访问 http://localhost:3000
-```
-
-### ArcPy 脚本运行
-```bash
-# 在 ArcGIS Pro Python 环境中运行
-cd arcpy-scripts/cursor-demo
-python cursor_example.py
 ```
 
 ---
@@ -65,17 +77,17 @@ python cursor_example.py
 - [ ] 试卷批改视觉AI工具
 - [ ] 地理综合题自动批改脚本
 - [ ] 学生简历评估工具（generate_resume）
-- [ ] 课程达成度分析完整工具
 - [ ] ArcPy 教程 HTML 笔记（01-11系列）
+- [ ] ArcPy 教学脚本实例
 
 ---
 
 ## 🔧 技术栈
 
-- **前端**：HTML5 / CSS3 / JavaScript / Vue3
+- **前端**：HTML5 / CSS3 / JavaScript（单文件工具）
 - **后端**：Node.js / Express / Python / Flask
 - **GIS**：ArcPy / ArcGIS Pro / GEE / PIE-Engine / OGE
-- **AI**：WorkBuddy Skills / Python 脚本
+- **AI**：兼容 OpenAI API 格式的大模型（Agens/Qwen/DeepSeek/GLM/Kimi/豆包/MiMo）
 
 ---
 
