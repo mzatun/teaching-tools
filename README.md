@@ -9,19 +9,26 @@
 
 ```
 teaching-tools/
-├── README.md                    # 本文件
-├── 达成度分析工具/              # 课程达成度分析 HTML 工具
+├── README.md                      # 本文件
+├── 达成度分析工具/                # 课程达成度分析 HTML 工具
 │   ├── 达成度分析工具v0.48.html   # 最新版（含AI报告生成）
 │   ├── 达成度分析工具v0.47.html   # 上一版
 │   ├── README.md                  # 工具说明与版本差异
 │   └── 用户使用手册.md
-├── H5评测工具/                 # 在线测评系统
+├── H5评测工具/                   # 在线测评系统
 │   ├── README.md
 │   ├── 01-需求分析.md ~ 08-部署文档.md
 │   ├── src/                       # Express.js 前后端源码
 │   └── 题目库-完整版.json
-├── ArcPy脚本实例/              # （待上传）
-└── 技能包/                   # （待上传）
+├── 教学相长技能包/                # WorkBuddy 教学技能包（6个）
+│   ├── README.md                  # 技能包说明文档
+│   ├── jiaying-syllabus-generator.zip
+│   ├── arcpy-course-notes.zip
+│   ├── thesis-proposal-review.zip
+│   ├── resume-evaluator.zip
+│   ├── tutorial-to-logic.zip
+│   └── research全能助手.zip
+└── ArcPy脚本实例/                # （待上传）
 ```
 
 ---
@@ -32,8 +39,12 @@ teaching-tools/
 |------|------|------|------|
 | **达成度分析工具** | 单文件 HTML | 课程达成度计算 + AI 报告生成（v0.48） | ✅ 完整 |
 | **H5评测工具** | Web应用 | Express.js + HTML/CSS/JS 在线测评系统 | ✅ 完整 |
-| 毕业论文评审 | Skill | 自动评审本科毕设（双视角输出） | ✅ 可用 |
-| 教学大纲生成器 | Skill | 嘉应学院标准大纲自动生成 | ✅ 可用 |
+| **嘉应学院教学大纲生成器** | WorkBuddy Skill | 按嘉应标准自动生成课程大纲 | ✅ 完整 |
+| **ArcPy 课程笔记生成** | WorkBuddy Skill | 多巴胺配色 HTML 学习笔记 | ✅ 完整 |
+| **毕业论文开题评审** | WorkBuddy Skill | AI 辅助评审毕设选题开题报告 | ✅ 完整 |
+| **简历评估助手** | WorkBuddy Skill | 学生简历解析与评估报告生成 | ✅ 完整 |
+| **教程逻辑化讲解** | WorkBuddy Skill | 软件操作教程转结构化讲解页面 | ✅ 完整 |
+| **科研全能助手** | WorkBuddy Skill | 论文复现/代码调试/数据分析/写作全流程 | ✅ 完整 |
 
 ---
 
