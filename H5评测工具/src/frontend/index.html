@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>爱创发明 - 青少年编程天赋测评</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/quiz-result.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 启动画面 -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="logo-container">
+                <div class="gear gear-1">⚙️</div>
+                <div class="gear gear-2">🔧</div>
+                <div class="gear gear-3">💡</div>
+            </div>
+            <h1 class="splash-title">爱创发明</h1>
+            <p class="splash-subtitle">青少年编程天赋测评系统</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">正在加载...</p>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div id="app" class="app-container" style="display: none;">
+        <!-- 首页 -->
+        <div id="home-page" class="page active">
+            <!-- 顶部导航 -->
+            <header class="header">
+                <div class="header-content">
+                    <div class="logo">
+                        <span class="logo-icon">💡</span>
+                        <span class="logo-text">爱创发明</span>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-icon" onclick="showStats()">
+                            <i class="fas fa-chart-bar"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 英雄区域 -->
+            <section class="hero-section">
+                <div class="hero-bg">
+                    <div class="floating-shapes">
+                        <div class="shape shape-1"></div>
+                        <div class="shape shape-2"></div>
+                        <div class="shape shape-3"></div>
+                        <div class="shape shape-4"></div>
+                    </div>
+                </div>
+                <div class="hero-content">
+                    <h2 class="hero-title">
+                        发现孩子的<br/>
+                        <span class="highlight">编程天赋</span>
+                    </h2>
+                    <p class="hero-desc">
+                        通过科学测评，了解孩子的逻辑思维、创造力、专注力等核心能力，
+                        为孩子的编程学习之路提供个性化建议
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">测评维度</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">25+</div>
+                            <div class="stat-label">专业题目</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">年龄分段</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEAM理念展示 -->
+            <section class="steam-section">
+                <h3 class="section-title">STEAM教育理念</h3>
+                <div class="steam-grid">
+                    <div class="steam-card" style="--delay: 0.1s">
+                        <div class="steam-icon">🔬</div>
+                        <div class="steam-letter">S</div>
+                        <div class="steam-name">科学</div>
+                    </div>
+                    <div class="steam-card" style="--delay: 0.2s">
+                        <div class="steam-icon">💻</div>
+                        <div class="steam-letter">T</div>
+                        <div class="steam-name">技术</div>
+                    </div>
+                    <div class="steam-card" style="--delay: 0.3s">
+                        <div class="steam-icon">🏗️</div>
+                        <div class="steam-letter">E</div>
+                        <div class="steam-name">工程</div>
+                    </div>
+                    <div class="steam-card" style="--delay: 0.4s">
+                        <div class="steam-icon">🎨</div>
+                        <div class="steam-letter">A</div>
+                        <div class="steam-name">艺术</div>
+                    </div>
+                    <div class="steam-card" style="--delay: 0.5s">
+                        <div class="steam-icon">🧮</div>
+                        <div class="steam-letter">M</div>
+                        <div class="steam-name">数学</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 测评维度 -->
+            <section class="dimensions-section">
+                <h3 class="section-title">测评维度</h3>
+                <div class="dimension-list">
+                    <div class="dimension-card">
+                        <div class="dimension-icon">🧠</div>
+                        <div class="dimension-info">
+                            <h4>逻辑思维</h4>
+                            <p>问题分析、推理判断、模式识别能力</p>
+                        </div>
+                        <div class="dimension-score">25分</div>
+                    </div>
+                    <div class="dimension-card">
+                        <div class="dimension-icon">💡</div>
+                        <div class="dimension-info">
+                            <h4>创意实现</h4>
+                            <p>想象力、创新思维、解决方案设计</p>
+                        </div>
+                        <div class="dimension-score">25分</div>
+                    </div>
+                    <div class="dimension-card">
+                        <div class="dimension-icon">📚</div>
+                        <div class="dimension-info">
+                            <h4>概念理解</h4>
+                            <p>编程基础概念、原理认知</p>
+                        </div>
+                        <div class="dimension-score">25分</div>
+                    </div>
+                    <div class="dimension-card">
+                        <div class="dimension-icon">🎯</div>
+                        <div class="dimension-info">
+                            <h4>专注毅力</h4>
+                            <p>注意力持久性、困难克服能力</p>
+                        </div>
+                        <div class="dimension-score">25分</div>
+                    </div>
+                    <div class="dimension-card">
+                        <div class="dimension-icon">🤝</div>
+                        <div class="dimension-info">
+                            <h4>协作沟通</h4>
+                            <p>团队合作、交流表达能力</p>
+                        </div>
+                        <div class="dimension-score">25分</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 开始测评按钮 -->
+            <section class="start-section">
+                <button class="btn-start" onclick="showAssessmentForm()">
+                    <span class="btn-text">开始测评</span>
+                    <span class="btn-icon">→</span>
+                </button>
+                <p class="start-tip">⏱️ 预计用时：15-30分钟</p>
+            </section>
+
+            <!-- 底部信息 -->
+            <footer class="footer">
+                <p>© 2026 爱创发明 版权所有</p>
+                <p>致力于培养3-16岁青少年的逻辑思维和创新实践能力</p>
+            </footer>
+        </div>
+
+        <!-- 测评表单页 -->
+        <div id="form-page" class="page">
+            <header class="header">
+                <button class="btn-back" onclick="showHome()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="header-title">填写信息</h2>
+            </header>
+
+            <div class="form-container">
+                <div class="form-progress">
+                    <div class="progress-step active">1</div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step">2</div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step">3</div>
+                </div>
+
+                <form id="assessment-form">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i> 学生姓名
+                        </label>
+                        <input type="text" id="student-name" class="form-input" placeholder="请输入姓名" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-venus-mars"></i> 性别
+                        </label>
+                        <div class="form-options">
+                            <label class="option-card">
+                                <input type="radio" name="gender" value="M">
+                                <span class="option-icon">👦</span>
+                                <span class="option-text">男生</span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="gender" value="F">
+                                <span class="option-icon">👧</span>
+                                <span class="option-text">女生</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-birthday-cake"></i> 出生日期
+                        </label>
+                        <input type="date" id="birth-date" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-graduation-cap"></i> 年级段
+                        </label>
+                        <div class="form-options">
+                            <label class="option-card">
+                                <input type="radio" name="grade" value="1">
+                                <span class="option-icon">📕</span>
+                                <span class="option-text">1-3年级</span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="grade" value="2">
+                                <span class="option-icon">📗</span>
+                                <span class="option-text">4-6年级</span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="grade" value="3">
+                                <span class="option-icon">📘</span>
+                                <span class="option-text">初中</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-code"></i> 是否有编程经验？
+                        </label>
+                        <div class="form-options">
+                            <label class="option-card">
+                                <input type="radio" name="exp" value="no">
+                                <span class="option-icon">❌</span>
+                                <span class="option-text">零基础</span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="exp" value="yes">
+                                <span class="option-icon">✅</span>
+                                <span class="option-text">有经验</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="exp-desc-group" style="display: none;">
+                        <label class="form-label">
+                            <i class="fas fa-edit"></i> 编程经验描述
+                        </label>
+                        <textarea id="exp-desc" class="form-textarea" placeholder="例如：学过Scratch、参加过机器人比赛等"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        下一步：开始答题
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

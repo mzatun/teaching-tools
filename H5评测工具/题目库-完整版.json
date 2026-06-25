@@ -1,0 +1,999 @@
+{
+  "meta": {
+    "title": "青少年编程天赋测评 - 题目库",
+    "version": "1.0.0",
+    "create_date": "2026-05-05",
+    "total_questions": 75,
+    "grades": {
+      "1-3": {"name": "小学1-3年级（6-9岁）", "count": 25},
+      "4-6": {"name": "小学4-6年级（9-12岁）", "count": 25},
+      "junior": {"name": "初中年级（12-15岁）", "count": 25}
+    },
+    "dimensions": {
+      "logic": "逻辑思维 - 分析问题、寻找规律的能力",
+      "creativity": "创意实现 - 将想法转化为方案的创新能力",
+      "concept": "概念理解 - 快速掌握抽象概念的能力",
+      "focus": "专注毅力 - 遇到难题时持续攻克的能力",
+      "collaboration": "协作沟通 - 团队配合和表达的能力",
+      "spatial": "空间想象 - 理解空间关系的能力（1-3年级附加）"
+    },
+    "score_range": "0-4分（最终归一化为0-100分）"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "grade": "1-3",
+      "dimension": ["logic", "spatial"],
+      "question": "小猫怎么走到小鱼的位置？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "向上走", "scores": {"logic": 4, "spatial": 2}},
+        {"label": "B", "text": "向下走", "scores": {"logic": 2, "spatial": 4}},
+        {"label": "C", "text": "向左走", "scores": {"logic": 3, "spatial": 3}},
+        {"label": "D", "text": "向右走", "scores": {"logic": 1, "spatial": 1}}
+      ]
+    },
+    {
+      "id": 2,
+      "grade": "1-3",
+      "dimension": ["concept", "logic"],
+      "question": "下面哪个积木可以让角色说"你好"？",
+      "image": "scratch_say_block.png",
+      "options": [
+        {"label": "A", "text": "移动10步", "scores": {"concept": 1, "logic": 2}},
+        {"label": "B", "text": "说"你好"2秒", "scores": {"concept": 4, "logic": 3}},
+        {"label": "C", "text": "播放声音", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "等待1秒", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 3,
+      "grade": "1-3",
+      "dimension": ["logic", "concept"],
+      "question": "如果要重复执行某段代码10次，应该使用哪个积木？",
+      "image": "scratch_loop_blocks.png",
+      "options": [
+        {"label": "A", "text": "重复执行10次", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "重复执行", "scores": {"logic": 3, "concept": 3}},
+        {"label": "C", "text": "如果...那么", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "等待1秒", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 4,
+      "grade": "1-3",
+      "dimension": ["logic", "creativity"],
+      "question": "小明想做一个"小猫追小鱼"的游戏，第一步应该做什么？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "直接开始玩", "scores": {"logic": 1, "creativity": 2}},
+        {"label": "B", "text": "想好游戏规则", "scores": {"logic": 4, "creativity": 4}},
+        {"label": "C", "text": "先画小鱼", "scores": {"logic": 2, "creativity": 3}},
+        {"label": "D", "text": "打开电脑", "scores": {"logic": 1, "creativity": 1}}
+      ]
+    },
+    {
+      "id": 5,
+      "grade": "1-3",
+      "dimension": ["spatial", "concept"],
+      "question": "在Scratch中，想让角色从舞台左边移动到右边，应该修改哪个数值？",
+      "image": "scratch_stage_coordinates.png",
+      "options": [
+        {"label": "A", "text": "X坐标从-100到100", "scores": {"spatial": 4, "concept": 3}},
+        {"label": "B", "text": "Y坐标从-100到100", "scores": {"spatial": 3, "concept": 2}},
+        {"label": "C", "text": "大小从50到100", "scores": {"spatial": 2, "concept": 2}},
+        {"label": "D", "text": "方向从0到90", "scores": {"spatial": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 6,
+      "grade": "1-3",
+      "dimension": ["logic", "concept"],
+      "question": "如果要判断"分数是否大于90分"，应该使用哪个积木？",
+      "image": "scratch_if_block.png",
+      "options": [
+        {"label": "A", "text": "重复执行", "scores": {"logic": 1, "concept": 1}},
+        {"label": "B", "text": "如果...那么", "scores": {"logic": 4, "concept": 4}},
+        {"label": "C", "text": "移动10步", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "说"你好"", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 7,
+      "grade": "1-3",
+      "dimension": ["creativity", "logic"],
+      "question": "做一个"接苹果"游戏，苹果应该从哪里掉下来？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "从天上随机位置", "scores": {"creativity": 4, "logic": 3}},
+        {"label": "B", "text": "从固定位置", "scores": {"creativity": 2, "logic": 2}},
+        {"label": "C", "text": "从地上往上飞", "scores": {"creativity": 1, "logic": 1}},
+        {"label": "D", "text": "不出现苹果", "scores": {"creativity": 0, "logic": 0}}
+      ]
+    },
+    {
+      "id": 8,
+      "grade": "1-3",
+      "dimension": ["focus", "collaboration"],
+      "question": "小华花了30分钟调试一个积木，终于让角色动起来了，他又花10分钟优化了动画效果。这体现了哪种品质？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "专注毅力", "scores": {"focus": 4, "collaboration": 1}},
+        {"label": "B", "text": "创意表达", "scores": {"focus": 2, "creativity": 3}},
+        {"label": "C", "text": "团队合作", "scores": {"focus": 1, "collaboration": 4}},
+        {"label": "D", "text": "快速完成", "scores": {"focus": 1, "creativity": 1}}
+      ]
+    },
+    {
+      "id": 9,
+      "grade": "1-3",
+      "dimension": ["collaboration", "communication"],
+      "question": "在团队项目中，你负责做背景，队友负责做角色，应该如何配合？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "各做各的，不沟通", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "B", "text": "先讨论整体风格，再分工", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "C", "text": "只做自己的部分", "scores": {"collaboration": 2, "communication": 1}},
+        {"label": "D", "text": "等队友做完再开始", "scores": {"collaboration": 3, "communication": 2}}
+      ]
+    },
+    {
+      "id": 10,
+      "grade": "1-3",
+      "dimension": ["concept", "logic"],
+      "question": "下面哪个描述是正确的"变量"概念？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "变量就像一个盒子，可以装东西（存储数据）", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "变量是一张图片", "scores": {"concept": 1, "logic": 1}},
+        {"label": "C", "text": "变量是一段音乐", "scores": {"concept": 1, "logic": 1}},
+        {"label": "D", "text": "变量是一个角色", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 11,
+      "grade": "1-3",
+      "dimension": ["logic", "concept"],
+      "question": "如果要让角色在舞台上一直移动，碰到边缘就反弹，应该怎么设置？",
+      "image": "scratch_movement_script.png",
+      "options": [
+        {"label": "A", "text": "重复执行 + 移动10步 + 碰到边缘就反弹", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "重复执行 + 移动10步", "scores": {"logic": 3, "concept": 3}},
+        {"label": "C", "text": "只设置移动10步", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "不设置", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 12,
+      "grade": "1-3",
+      "dimension": ["creativity", "logic"],
+      "question": "小明想做一个"打地鼠"游戏，地鼠应该多久冒出来一次？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "随机时间（1-3秒）", "scores": {"creativity": 4, "logic": 3}},
+        {"label": "B", "text": "固定每秒一次", "scores": {"creativity": 2, "logic": 2}},
+        {"label": "C", "text": "不出现地鼠", "scores": {"creativity": 0, "logic": 0}},
+        {"label": "D", "text": "一直冒出来", "scores": {"creativity": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 13,
+      "grade": "1-3",
+      "dimension": ["concept", "logic"],
+      "question": "在Scratch中，"克隆"功能是什么意思？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "复制很多个相同的角色", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "删除角色", "scores": {"concept": 1, "logic": 1}},
+        {"label": "C", "text": "让角色变色", "scores": {"concept": 2, "logic": 1}},
+        {"label": "D", "text": "让角色说话", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 14,
+      "grade": "1-3",
+      "dimension": ["logic", "concept"],
+      "question": "小华在做一个动画，发现角色移动太快了，应该怎么调整？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "在移动前加"等待1秒"", "scores": {"logic": 4, "concept": 3}},
+        {"label": "B", "text": "让角色变大", "scores": {"logic": 2, "concept": 1}},
+        {"label": "C", "text": "删除这个角色", "scores": {"logic": 1, "concept": 1}},
+        {"label": "D", "text": "不管它，继续做", "scores": {"logic": 1, "focus": 2}}
+      ]
+    },
+    {
+      "id": 15,
+      "grade": "1-3",
+      "dimension": ["logic", "concept"],
+      "question": "如果要统计游戏得分，应该使用哪个变量操作？",
+      "image": "scratch_variable_blocks.png",
+      "options": [
+        {"label": "A", "text": "将得分增加1", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "将得分设为0", "scores": {"logic": 3, "concept": 3}},
+        {"label": "C", "text": "显示变量得分", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "隐藏变量得分", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 16,
+      "grade": "1-3",
+      "dimension": ["creativity", "logic"],
+      "question": "设计一个"迷宫游戏"，玩家控制角色从起点走到终点。哪个更重要？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "迷宫路线设计有趣，难度适中", "scores": {"creativity": 4, "logic": 3}},
+        {"label": "B", "text": "背景图片漂亮", "scores": {"creativity": 3, "logic": 1}},
+        {"label": "C", "text": "角色造型多", "scores": {"creativity": 2, "logic": 1}},
+        {"label": "D", "text": "加入很多音效", "scores": {"creativity": 2, "logic": 1}}
+      ]
+    },
+    {
+      "id": 17,
+      "grade": "1-3",
+      "dimension": ["collaboration", "communication"],
+      "question": "在团队项目中，队友的代码有Bug，你应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "帮他找出问题并一起修复", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "不管它，做自己的部分", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "C", "text": "告诉老师，让老师处理", "scores": {"collaboration": 2, "communication": 2}},
+        {"label": "D", "text": "嘲笑队友", "scores": {"collaboration": 0, "communication": 0}}
+      ]
+    },
+    {
+      "id": 18,
+      "grade": "1-3",
+      "dimension": ["logic", "concept"],
+      "question": "在Scratch中，以下哪个积木可以让角色"跳跃"？",
+      "image": "scratch_jump_script.png",
+      "options": [
+        {"label": "A", "text": "将Y坐标增加50，等待0.5秒，将Y坐标增加-50", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "移动50步", "scores": {"logic": 2, "concept": 2}},
+        {"label": "C", "text": "转向90度", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "说"跳"", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 19,
+      "grade": "1-3",
+      "dimension": ["focus", "logic"],
+      "question": "小华做项目时遇到了问题，代码不工作。他应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "仔细检查每一块积木，找出问题", "scores": {"focus": 4, "logic": 4}},
+        {"label": "B", "text": "放弃，不做了", "scores": {"focus": 0, "logic": 0}},
+        {"label": "C", "text": "随便改改，看运气", "scores": {"focus": 1, "logic": 1}},
+        {"label": "D", "text": "等别人帮忙", "scores": {"focus": 2, "logic": 1}}
+      ]
+    },
+    {
+      "id": 20,
+      "grade": "1-3",
+      "dimension": ["creativity", "logic"],
+      "question": "如果要做一个"绘画板"程序，应该如何实现画笔功能？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "当鼠标被点击时，盖章并跟随鼠标移动", "scores": {"creativity": 4, "logic": 4}},
+        {"label": "B", "text": "只显示一张图片", "scores": {"creativity": 2, "logic": 1}},
+        {"label": "C", "text": "播放绘画视频", "scores": {"creativity": 1, "logic": 1}},
+        {"label": "D", "text": "显示"正在绘画"的文字", "scores": {"creativity": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 21,
+      "grade": "1-3",
+      "dimension": ["concept", "logic"],
+      "question": "在Scratch中，"广播"功能的作用是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "让不同的角色之间传递消息", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "播放音乐", "scores": {"concept": 1, "logic": 1}},
+        {"label": "C", "text": "让角色变大", "scores": {"concept": 1, "logic": 1}},
+        {"label": "D", "text": "保存项目", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 22,
+      "grade": "1-3",
+      "dimension": ["creativity", "logic"],
+      "question": "设计一个"垃圾分类"游戏，哪种交互方式最好？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "用鼠标拖拽垃圾到对应的垃圾桶", "scores": {"creativity": 4, "logic": 3}},
+        {"label": "B", "text": "点击按钮选择垃圾类型", "scores": {"creativity": 3, "logic": 2}},
+        {"label": "C", "text": "只看图片，不互动", "scores": {"creativity": 1, "logic": 1}},
+        {"label": "D", "text": "输入文字答案", "scores": {"creativity": 2, "logic": 2}}
+      ]
+    },
+    {
+      "id": 23,
+      "grade": "1-3",
+      "dimension": ["collaboration", "communication"],
+      "question": "小华和小明的项目整合时，发现两个人的变量名都一样，应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "一起讨论，统一重命名变量", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "不管它，直接合并", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "C", "text": "只用其中一个人的变量", "scores": {"collaboration": 2, "communication": 2}},
+        {"label": "D", "text": "重新开始做", "scores": {"collaboration": 1, "communication": 1}}
+      ]
+    },
+    {
+      "id": 24,
+      "grade": "1-3",
+      "dimension": ["logic", "concept"],
+      "question": "如果要让游戏有"开始界面"和"游戏界面"，应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "使用"广播"切换不同的背景和角色", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "只做一个界面", "scores": {"logic": 2, "concept": 2}},
+        {"label": "C", "text": "做两个独立的项目", "scores": {"logic": 1, "concept": 1}},
+        {"label": "D", "text": "不确定", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 25,
+      "grade": "1-3",
+      "dimension": ["collaboration", "communication"],
+      "question": "完成一个Scratch项目后，最重要的是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "让别人试玩，收集反馈并改进", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "直接提交，不管别人能不能玩", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "C", "text": "只给自己玩", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "D", "text": "删除项目，重新做", "scores": {"collaboration": 0, "communication": 0}}
+      ]
+    },
+    {
+      "id": 26,
+      "grade": "4-6",
+      "dimension": ["logic", "concept"],
+      "question": "有一个数列：1, 1, 2, 3, 5, 8, 13... 下一个数是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "18", "scores": {"logic": 2, "concept": 2}},
+        {"label": "B", "text": "21", "scores": {"logic": 4, "concept": 3}},
+        {"label": "C", "text": "20", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "不确定", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 27,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "在Python中，想打印"Hello World"，应该写哪段代码？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "print(\"Hello World\")", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "echo \"Hello World\"", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "System.out.println(\"Hello World\")", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "printf(\"Hello World\")", "scores": {"concept": 1, "logic": 2}}
+      ]
+    },
+    {
+      "id": 28,
+      "grade": "4-6",
+      "dimension": ["logic", "concept"],
+      "question": "一个变量 `score = 85`，如果要判断"是否及格（≥60分）"，应该怎么写？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "if score >= 60:", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "if score > 60:", "scores": {"logic": 3, "concept": 3}},
+        {"label": "C", "text": "if score = 60:", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "if score <= 60:", "scores": {"logic": 1, "concept": 2}}
+      ]
+    },
+    {
+      "id": 29,
+      "grade": "4-6",
+      "dimension": ["logic", "creativity"],
+      "question": "小华想做一个"猜数字"游戏（计算机随机想一个1-100的数，玩家猜）。以下哪个逻辑是对的？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "如果猜的数太大，提示"太大了"；太小则提示"太小了"", "scores": {"logic": 4, "creativity": 3}},
+        {"label": "B", "text": "直接告诉答案", "scores": {"logic": 2, "creativity": 1}},
+        {"label": "C", "text": "不让玩家猜", "scores": {"logic": 1, "creativity": 0}},
+        {"label": "D", "text": "随机猜", "scores": {"logic": 1, "creativity": 1}}
+      ]
+    },
+    {
+      "id": 30,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "在Python中，想让代码重复执行10次，应该用什么结构？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "for i in range(10):", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "while True:", "scores": {"concept": 3, "logic": 3}},
+        {"label": "C", "text": "if True:", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "print(10)", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 31,
+      "grade": "4-6",
+      "dimension": ["focus", "logic"],
+      "question": "小华花了1小时调试一个Bug（代码错误），终于修好了。这体现了哪种品质？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "专注毅力", "scores": {"focus": 4, "logic": 2}},
+        {"label": "B", "text": "创意表达", "scores": {"focus": 2, "creativity": 3}},
+        {"label": "C", "text": "团队合作", "scores": {"focus": 1, "collaboration": 4}},
+        {"label": "D", "text": "快速放弃", "scores": {"focus": 0, "logic": 0}}
+      ]
+    },
+    {
+      "id": 32,
+      "grade": "4-6",
+      "dimension": ["collaboration", "communication"],
+      "question": "在团队项目中，你和小伙伴一起写一个游戏。你们应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "先讨论整体架构，再分工写代码", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "各写各的，最后拼在一起", "scores": {"collaboration": 2, "communication": 1}},
+        {"label": "C", "text": "只让一个人写", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "D", "text": "不写，直接玩", "scores": {"collaboration": 0, "communication": 0}}
+      ]
+    },
+    {
+      "id": 33,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "Python中，想存储一个学生的姓名、年龄、成绩，最好使用什么数据结构？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "字典（dict）", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "数字变量", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "字符串", "scores": {"concept": 2, "logic": 1}},
+        {"label": "D", "text": "不知道", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 34,
+      "grade": "4-6",
+      "dimension": ["logic", "concept"],
+      "question": "做一个"倒计时"程序（从10数到1），应该使用哪种循环？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "for i in range(10, 0, -1):", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "for i in range(10):", "scores": {"logic": 3, "concept": 3}},
+        {"label": "C", "text": "while i < 10:", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "print(10)", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 35,
+      "grade": "4-6",
+      "dimension": ["logic", "concept"],
+      "question": "小华想做一个"通讯录管理"程序，需要添加、删除、查找联系人。哪个功能最重要？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "数据存储（保存到文件）", "scores": {"logic": 4, "concept": 3}},
+        {"label": "B", "text": "界面漂亮", "scores": {"logic": 2, "creativity": 3}},
+        {"label": "C", "text": "有很多联系人", "scores": {"logic": 2, "concept": 2}},
+        {"label": "D", "text": "不需要任何功能", "scores": {"logic": 0, "concept": 0}}
+      ]
+    },
+    {
+      "id": 36,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "在Python中，`list`（列表）和`tuple`（元组）的区别是什么？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "列表可以修改，元组不能修改", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "列表不能修改，元组可以修改", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "两者完全一样", "scores": {"concept": 1, "logic": 1}},
+        {"label": "D", "text": "不知道", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 37,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "小明想用Python画一个正方形，应该使用哪个库的哪个命令？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "turtle.forward(100) 和 turtle.right(90)", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "print(\"正方形\")", "scores": {"concept": 2, "logic": 1}},
+        {"label": "C", "text": "turtle.circle(100)", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "draw.square()", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 38,
+      "grade": "4-6",
+      "dimension": ["collaboration", "concept"],
+      "question": "在团队编程中，使用"版本控制"（如Git）的主要目的是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "记录代码修改历史，方便回退和协作", "scores": {"collaboration": 4, "concept": 4}},
+        {"label": "B", "text": "让代码运行更快", "scores": {"collaboration": 1, "concept": 2}},
+        {"label": "C", "text": "让代码更好看", "scores": {"collaboration": 1, "concept": 1}},
+        {"label": "D", "text": "不需要版本控制", "scores": {"collaboration": 0, "concept": 0}}
+      ]
+    },
+    {
+      "id": 39,
+      "grade": "4-6",
+      "dimension": ["focus", "logic"],
+      "question": "小华的代码中有一个死循环（`while True:` 没有break），程序一直不停止。他应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "检查循环条件，添加退出机制", "scores": {"focus": 4, "logic": 4}},
+        {"label": "B", "text": "直接关闭程序，不管它", "scores": {"focus": 2, "logic": 1}},
+        {"label": "C", "text": "重新写一遍", "scores": {"focus": 3, "logic": 2}},
+        {"label": "D", "text": "放弃这个项目", "scores": {"focus": 0, "logic": 0}}
+      ]
+    },
+    {
+      "id": 40,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "在Python中，想读取一个文本文件的内容，应该用什么代码？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "with open('file.txt', 'r') as f: content = f.read()", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "print('file.txt')", "scores": {"concept": 1, "logic": 1}},
+        {"label": "C", "text": "read file.txt", "scores": {"concept": 2, "logic": 1}},
+        {"label": "D", "text": "open('file.txt')", "scores": {"concept": 3, "logic": 2}}
+      ]
+    },
+    {
+      "id": 41,
+      "grade": "4-6",
+      "dimension": ["logic", "creativity"],
+      "question": "设计一个"石头剪刀布"游戏（人机对战），最核心的逻辑是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "随机生成电脑的选择，与玩家比较判断胜负", "scores": {"logic": 4, "creativity": 3}},
+        {"label": "B", "text": "只让玩家赢", "scores": {"logic": 2, "creativity": 1}},
+        {"label": "C", "text": "只让电脑赢", "scores": {"logic": 1, "creativity": 1}},
+        {"label": "D", "text": "不判断胜负", "scores": {"logic": 0, "creativity": 0}}
+      ]
+    },
+    {
+      "id": 42,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "在Python中，想定义一个函数（可以重复使用的代码块），应该使用哪个关键字？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "def", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "function", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "void", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "int", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 43,
+      "grade": "4-6",
+      "dimension": ["collaboration", "communication"],
+      "question": "小华和小明的代码合并时，发现两个人都修改了同一个文件的同一部分。应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "一起讨论，手动合并代码", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "直接用小华的代码覆盖小明的", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "C", "text": "直接用小明的代码覆盖小华的", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "D", "text": "放弃合并，各用各的", "scores": {"collaboration": 2, "communication": 1}}
+      ]
+    },
+    {
+      "id": 44,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "在Python中，`import` 语句的作用是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "导入其他Python文件或库，使用其中的函数", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "删除文件", "scores": {"concept": 1, "logic": 1}},
+        {"label": "C", "text": "打印内容", "scores": {"concept": 1, "logic": 1}},
+        {"label": "D", "text": "不重要", "scores": {"concept": 0, "logic": 0}}
+      ]
+    },
+    {
+      "id": 45,
+      "grade": "4-6",
+      "dimension": ["logic", "concept"],
+      "question": "做一个"学生成绩管理系统"，需要计算平均分、最高分、最低分。哪种思路最好？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "使用循环遍历成绩列表，分别计算", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "手动输入每个统计结果", "scores": {"logic": 2, "concept": 2}},
+        {"label": "C", "text": "不计算，只记录成绩", "scores": {"logic": 1, "concept": 1}},
+        {"label": "D", "text": "不需要这个系统", "scores": {"logic": 0, "concept": 0}}
+      ]
+    },
+    {
+      "id": 46,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "在Python中，想让程序"等待3秒"再继续执行，应该用什么？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "import time 然后 time.sleep(3)", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "wait 3", "scores": {"concept": 2, "logic": 1}},
+        {"label": "C", "text": "sleep 3", "scores": {"concept": 2, "logic": 1}},
+        {"label": "D", "text": "pause(3)", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 47,
+      "grade": "4-6",
+      "dimension": ["concept", "logic"],
+      "question": "小华想做一个"数据分析"程序，读取Excel文件并画图。应该使用哪些库？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "pandas（读Excel） + matplotlib（画图）", "scores": {"concept": 4, "logic": 4}},
+        {"label": "B", "text": "turtle（画图）", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "pygame（做游戏）", "scores": {"concept": 1, "logic": 1}},
+        {"label": "D", "text": "不知道", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 48,
+      "grade": "4-6",
+      "dimension": ["collaboration", "communication"],
+      "question": "在团队项目中，应该多久"提交代码"（commit）一次？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "完成一个小功能就提交，并写清楚说明", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "一天提交一次", "scores": {"collaboration": 3, "communication": 3}},
+        {"label": "C", "text": "项目完成后一次性提交", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "D", "text": "不提交，只保存在本地", "scores": {"collaboration": 0, "communication": 0}}
+      ]
+    },
+    {
+      "id": 49,
+      "grade": "4-6",
+      "dimension": ["logic", "concept"],
+      "question": "在Python中，想判断一个数是奇数还是偶数，应该用什么运算？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "if num % 2 == 0: （偶数）", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "if num / 2 == 0:", "scores": {"logic": 2, "concept": 2}},
+        {"label": "C", "text": "if num * 2 == 0:", "scores": {"logic": 1, "concept": 1}},
+        {"label": "D", "text": "不知道", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 50,
+      "grade": "4-6",
+      "dimension": ["collaboration", "communication"],
+      "question": "完成一个Python项目后，最重要的是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "写README文档，让别人知道怎么用", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "直接发给别人，不写文档", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "C", "text": "只自己用，不给别人", "scores": {"collaboration": 2, "communication": 1}},
+        {"label": "D", "text": "删除项目", "scores": {"collaboration": 0, "communication": 0}}
+      ]
+    },
+    {
+      "id": 51,
+      "grade": "junior",
+      "dimension": ["logic", "concept"],
+      "question": "有一个数组 `[3, 7, 1, 9, 2]`，如果要按从小到大排序，排序后的结果是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "[1, 2, 3, 7, 9]", "scores": {"logic": 4, "concept": 3}},
+        {"label": "B", "text": "[9, 7, 3, 2, 1]", "scores": {"logic": 3, "concept": 2}},
+        {"label": "C", "text": "[3, 7, 1, 9, 2]", "scores": {"logic": 2, "concept": 1}},
+        {"label": "D", "text": "不确定", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 52,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++中，想输入一个整数并存储到变量`a`中，应该怎么写？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "cin >> a;", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "cout << a;", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "scanf(\"%d\", &a);", "scores": {"concept": 3, "logic": 3}},
+        {"label": "D", "text": "input(a);", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 53,
+      "grade": "junior",
+      "dimension": ["logic", "concept"],
+      "question": "小明想写一个"判断素数"的程序（素数：只能被1和自身整除的数）。以下哪个思路是对的？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "从2到√n，逐个判断是否整除", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "只判断能否被2整除", "scores": {"logic": 2, "concept": 2}},
+        {"label": "C", "text": "从2到n-1，逐个判断", "scores": {"logic": 3, "concept": 3}},
+        {"label": "D", "text": "不确定", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 54,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++中，想定义一个可以存储10个整数的数组，应该怎么写？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "int arr[10];", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "array int arr[10];", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "int arr(10);", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "arr[10] int;", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 55,
+      "grade": "junior",
+      "dimension": ["focus", "logic"],
+      "question": "小华花了一下午调试一个"段错误（Segmentation Fault）"，最后发现是"数组越界"导致的。这体现了哪种品质？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "专注毅力", "scores": {"focus": 4, "logic": 3}},
+        {"label": "B", "text": "创意表达", "scores": {"focus": 2, "creativity": 3}},
+        {"label": "C", "text": "团队合作", "scores": {"focus": 1, "collaboration": 4}},
+        {"label": "D", "text": "快速放弃", "scores": {"focus": 0, "logic": 0}}
+      ]
+    },
+    {
+      "id": 56,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++中，`指针（pointer）` 的作用是什么？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "存储变量的内存地址", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "存储变量的值", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "存储多个变量", "scores": {"concept": 2, "logic": 1}},
+        {"label": "D", "text": "不知道", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 57,
+      "grade": "junior",
+      "dimension": ["logic", "concept"],
+      "question": "设计一个"学生管理系统"，需要添加、删除、查找、修改学生信息。应该使用哪种数据结构最合适？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "结构体数组 或 vector<Student>", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "只用变量", "scores": {"logic": 2, "concept": 2}},
+        {"label": "C", "text": "只用数组", "scores": {"logic": 3, "concept": 3}},
+        {"label": "D", "text": "不确定", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 58,
+      "grade": "junior",
+      "dimension": ["collaboration", "communication"],
+      "question": "在团队竞赛项目（如NOI）中，你们队遇到一个难题，应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "一起讨论，分工突破", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "让最强的人单独做", "scores": {"collaboration": 2, "communication": 1}},
+        {"label": "C", "text": "放弃这道题", "scores": {"collaboration": 1, "logic": 0}},
+        {"label": "D", "text": "抄别人的答案", "scores": {"collaboration": 0, "logic": 0}}
+      ]
+    },
+    {
+      "id": 59,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++中，想写一个函数来计算两个数的最大值，应该怎么定义？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "int max(int a, int b) { return a > b ? a : b; }", "scores": {"concept": 4, "logic": 4}},
+        {"label": "B", "text": "void max(int a, int b) { cout << max; }", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "max(a, b) { ... }", "scores": {"concept": 1, "logic": 1}},
+        {"label": "D", "text": "不确定", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 60,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在算法竞赛中，"时间复杂度"是指？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "算法运行时间与输入规模的关系", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "算法代码的行数", "scores": {"concept": 2, "logic": 1}},
+        {"label": "C", "text": "算法占用的内存大小", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "不知道", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 61,
+      "grade": "junior",
+      "dimension": ["logic", "concept"],
+      "question": "小华想优化一个"冒泡排序"算法，将其优化为"快速排序"。这主要提升了？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "时间复杂度（从O(n²)到O(n log n)）", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "代码长度", "scores": {"logic": 2, "concept": 1}},
+        {"label": "C", "text": "内存占用", "scores": {"logic": 3, "concept": 3}},
+        {"label": "D", "text": "可读性", "scores": {"logic": 2, "concept": 2}}
+      ]
+    },
+    {
+      "id": 62,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++中，`引用（reference）` 和 `指针（pointer）` 的区别是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "引用必须初始化，且不能改变引用的对象", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "两者完全一样", "scores": {"concept": 1, "logic": 1}},
+        {"label": "C", "text": "指针必须初始化，引用不用", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "不确定", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 63,
+      "grade": "junior",
+      "dimension": ["logic", "concept"],
+      "question": "设计一个"图书管理系统"，需要永久保存数据（关机后不丢失）。应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "使用文件操作（fstream），将数据写入文件", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "只用变量存储", "scores": {"logic": 2, "concept": 1}},
+        {"label": "C", "text": "不保存，每次重新输入", "scores": {"logic": 1, "concept": 0}},
+        {"label": "D", "text": "不确定", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 64,
+      "grade": "junior",
+      "dimension": ["collaboration", "communication"],
+      "question": "在团队项目中，使用`Git`进行版本控制。如果两人同时修改了同一个文件，应该如何解决"冲突（conflict）"？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "一起讨论，手动合并代码", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "直接用其中一个人的版本覆盖", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "C", "text": "删除这个文件，重新写", "scores": {"collaboration": 2, "logic": 1}},
+        {"label": "D", "text": "不管冲突，继续开发", "scores": {"collaboration": 0, "logic": 0}}
+      ]
+    },
+    {
+      "id": 65,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++的STL（标准模板库）中，`vector` 和 `map` 的区别是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "vector是动态数组，map是键值对（key-value）", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "两者完全一样", "scores": {"concept": 1, "logic": 1}},
+        {"label": "C", "text": "vector存储键值对，map是动态数组", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "不确定", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 66,
+      "grade": "junior",
+      "dimension": ["focus", "logic"],
+      "question": "小明参加算法竞赛，遇到一道难题，调试了2小时还是没通过。应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "先跳过，做其他题，回头再想", "scores": {"focus": 4, "logic": 4}},
+        {"label": "B", "text": "一直卡在这道题上", "scores": {"focus": 2, "logic": 2}},
+        {"label": "C", "text": "直接放弃竞赛", "scores": {"focus": 0, "logic": 0}},
+        {"label": "D", "text": "抄别人的代码", "scores": {"focus": 1, "logic": 0}}
+      ]
+    },
+    {
+      "id": 67,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++中，想动态分配一个整数数组（大小由用户输入），应该使用？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "int* arr = new int[n];", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "int arr[n];", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "int arr = new int[n];", "scores": {"concept": 2, "logic": 1}},
+        {"label": "D", "text": "不确定", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 68,
+      "grade": "junior",
+      "dimension": ["logic", "concept"],
+      "question": "设计一个"在线聊天室"程序（网络通信），最核心的技术是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "Socket编程（或WebSocket）", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "只用变量存储聊天记录", "scores": {"logic": 2, "concept": 1}},
+        {"label": "C", "text": "不需要网络，本地聊天", "scores": {"logic": 1, "concept": 0}},
+        {"label": "D", "text": "不确定", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 69,
+      "grade": "junior",
+      "dimension": ["collaboration", "communication"],
+      "question": "在团队项目中，你应该如何写"代码注释"？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "写清楚函数功能、参数含义、返回值", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "不写注释，代码自己会说话", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "C", "text": "只写很少的注释", "scores": {"collaboration": 2, "communication": 2}},
+        {"label": "D", "text": "写错误的注释", "scores": {"collaboration": 0, "logic": 0}}
+      ]
+    },
+    {
+      "id": 70,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++中，`递归函数` 是指？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "函数自己调用自己", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "两个函数互相调用", "scores": {"concept": 3, "logic": 3}},
+        {"label": "C", "text": "函数调用其他函数", "scores": {"concept": 2, "logic": 2}},
+        {"label": "D", "text": "不确定", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 71,
+      "grade": "junior",
+      "dimension": ["logic", "concept"],
+      "question": "小华想实现一个"二叉树"数据结构，用于存储和查找数据。二叉树的优势是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "查找速度快（O(log n)）", "scores": {"logic": 4, "concept": 4}},
+        {"label": "B", "text": "代码简单", "scores": {"logic": 2, "concept": 2}},
+        {"label": "C", "text": "占用内存小", "scores": {"logic": 3, "concept": 3}},
+        {"label": "D", "text": "不确定", "scores": {"logic": 1, "concept": 1}}
+      ]
+    },
+    {
+      "id": 72,
+      "grade": "junior",
+      "dimension": ["logic", "focus"],
+      "question": "在算法竞赛中，如果遇到"超时（TLE）"错误，应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "优化算法，降低时间复杂度", "scores": {"logic": 4, "focus": 4}},
+        {"label": "B", "text": "多提交几次，碰运气", "scores": {"logic": 1, "focus": 1}},
+        {"label": "C", "text": "放弃这道题", "scores": {"logic": 0, "focus": 0}},
+        {"label": "D", "text": "抄别人的代码", "scores": {"logic": 0, "focus": 0}}
+      ]
+    },
+    {
+      "id": 73,
+      "grade": "junior",
+      "dimension": ["concept", "logic"],
+      "question": "在C++中，`面向对象编程（OOP）` 的三大特性是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "封装、继承、多态", "scores": {"concept": 4, "logic": 3}},
+        {"label": "B", "text": "顺序、选择、循环", "scores": {"concept": 2, "logic": 2}},
+        {"label": "C", "text": "输入、处理、输出", "scores": {"concept": 2, "logic": 1}},
+        {"label": "D", "text": "不确定", "scores": {"concept": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 74,
+      "grade": "junior",
+      "dimension": ["creativity", "logic"],
+      "question": "设计一个"在线考试系统"，需要防止"作弊（切屏、查资料）"。应该？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "全屏模式 + 摄像头监控 + 随机题目顺序", "scores": {"creativity": 4, "logic": 4}},
+        {"label": "B", "text": "只相信学生自觉", "scores": {"creativity": 1, "logic": 1}},
+        {"label": "C", "text": "不防止作弊", "scores": {"creativity": 0, "logic": 0}},
+        {"label": "D", "text": "不确定", "scores": {"creativity": 1, "logic": 1}}
+      ]
+    },
+    {
+      "id": 75,
+      "grade": "junior",
+      "dimension": ["collaboration", "communication"],
+      "question": "完成一个大型编程项目（如竞赛作品、毕业设计）后，最重要的是？",
+      "image": "",
+      "options": [
+        {"label": "A", "text": "写详细文档，让别人能理解和使用", "scores": {"collaboration": 4, "communication": 4}},
+        {"label": "B", "text": "只给自己用，不写文档", "scores": {"collaboration": 1, "communication": 1}},
+        {"label": "C", "text": "删除项目，重新做", "scores": {"collaboration": 0, "logic": 0}},
+        {"label": "D", "text": "不管它，宣布完成", "scores": {"collaboration": 1, "communication": 1}}
+      ]
+    }
+  ]
+}

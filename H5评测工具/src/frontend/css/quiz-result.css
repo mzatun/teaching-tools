@@ -1,0 +1,546 @@
+/* ===== 测评页面样式 ===== */
+.header-progress {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.header-timer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--accent-yellow);
+}
+
+.quiz-container {
+    padding: 20px;
+    padding-bottom: 40px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #E0E0E0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.question-card {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.question-dimension {
+    background: rgba(255, 107, 53, 0.1);
+    color: var(--primary);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.question-difficulty {
+    color: var(--accent-yellow);
+    font-size: 14px;
+}
+
+.question-text {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    border: 2px solid #E0E0E0;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s;
+    background: var(--bg-light);
+}
+
+.option-item input {
+    display: none;
+}
+
+.option-item:hover {
+    border-color: var(--primary-light);
+    background: rgba(255, 107, 53, 0.05);
+}
+
+.option-item.selected {
+    border-color: var(--primary);
+    background: rgba(255, 107, 53, 0.1);
+}
+
+.option-label {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.option-item.selected .option-label {
+    background: var(--primary-dark);
+}
+
+.option-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-dark);
+}
+
+.quiz-navigation {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.btn-quiz-nav {
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-prev {
+    background: var(--bg-light);
+    color: var(--text-dark);
+}
+
+.btn-prev:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-prev:not(:disabled):hover {
+    background: #E0E0E0;
+}
+
+.btn-next {
+    background: var(--primary);
+    color: white;
+    margin-left: auto;
+}
+
+.btn-next:hover {
+    background: var(--primary-dark);
+    transform: translateX(3px);
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, var(--secondary), var(--accent-purple));
+    color: white;
+    margin-left: auto;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+/* ===== 结果页面样式 ===== */
+.result-container {
+    padding: 20px;
+    padding-bottom: 40px;
+}
+
+.result-header {
+    text-align: center;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+    border-radius: var(--radius);
+    color: white;
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.result-avatar {
+    font-size: 60px;
+    margin-bottom: 15px;
+    animation: bounce 2s ease infinite;
+}
+
+.result-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.result-desc {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.result-score-card {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    padding: 30px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    animation: slideInUp 0.5s ease 0.2s backwards;
+}
+
+.total-score {
+    margin-bottom: 15px;
+}
+
+.score-number {
+    font-size: 64px;
+    font-weight: bold;
+    background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.score-label {
+    font-size: 16px;
+    color: var(--text-light);
+}
+
+.score-level {
+    display: inline-block;
+    padding: 8px 20px;
+    background: rgba(255, 107, 53, 0.1);
+    color: var(--primary);
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.radar-chart-container {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    animation: slideInUp 0.5s ease 0.4s backwards;
+}
+
+#radar-chart {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.dimensions-result {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.dimension-result-card {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    animation: slideInUp 0.5s ease backwards;
+    animation-delay: calc(0.6s + var(--index, 0) * 0.1s);
+}
+
+.dimension-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.dimension-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.dimension-score {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.dimension-bar {
+    width: 100%;
+    height: 8px;
+    background: #E0E0E0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.dimension-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+.dimension-interpretation {
+    font-size: 14px;
+}
+
+.interpretation-level {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(78, 205, 196, 0.1);
+    color: var(--secondary);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.interpretation-text {
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.interpretation-suggestions {
+    color: var(--text-light);
+    line-height: 1.6;
+    font-size: 13px;
+}
+
+.course-recommendations {
+    margin-bottom: 20px;
+    animation: slideInUp 0.5s ease 1s backwards;
+}
+
+.course-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.course-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+}
+
+.course-card:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.course-icon {
+    font-size: 36px;
+    width: 50px;
+    text-align: center;
+}
+
+.course-info {
+    flex: 1;
+}
+
+.course-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.course-desc {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.course-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.btn-course-detail {
+    padding: 8px 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-course-detail:hover {
+    background: var(--primary-dark);
+}
+
+.result-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: slideInUp 0.5s ease 1.2s backwards;
+}
+
+.btn-primary {
+    padding: 15px;
+    background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    padding: 15px;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-secondary:hover {
+    background: #3DBDB4;
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    padding: 15px;
+    background: transparent;
+    color: var(--text-dark);
+    border: 2px solid #E0E0E0;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-outline:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* ===== 动画增强 ===== */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.result-score-card:hover {
+    animation: pulse 1s ease;
+}
+
+/* ===== 响应式优化 ===== */
+@media (max-width: 375px) {
+    .quiz-navigation {
+        flex-direction: column;
+    }
+    
+    .btn-quiz-nav {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn-next, .btn-submit {
+        margin-left: 0;
+    }
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+    .header, .result-actions, .quiz-navigation {
+        display: none;
+    }
+    
+    .result-container {
+        padding: 0;
+    }
+    
+    .result-score-card, .dimension-result-card, .course-card {
+        break-inside: avoid;
+    }
+}

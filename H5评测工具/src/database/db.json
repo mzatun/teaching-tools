@@ -1,0 +1,291 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question_id": "Q1_G1_01",
+      "grade_level": 1,
+      "dimension": "logic",
+      "difficulty": 2,
+      "question_type": "choice",
+      "question_text": "小猫想从A点走到B点，下面哪条路最近？",
+      "option_a": "路1：直线",
+      "option_b": "路2：弯弯曲曲的路",
+      "option_c": "路3：绕远路",
+      "option_d": "都一样近",
+      "option_e": "",
+      "score_a": 4,
+      "score_b": 2,
+      "score_c": 1,
+      "score_d": 0,
+      "score_e": 0,
+      "explanation": "直线距离最短，这是几何基本概念",
+      "tags": "空间思维,基础逻辑",
+      "is_active": 1
+    },
+    {
+      "id": 2,
+      "question_id": "Q2_G1_02",
+      "grade_level": 1,
+      "dimension": "creativity",
+      "difficulty": 2,
+      "question_type": "scenario",
+      "question_text": "如果你可以设计自己的机器人，你希望它有什么功能？",
+      "option_a": "帮我写作业",
+      "option_b": "陪我玩，讲故事",
+      "option_c": "帮我打扫房间",
+      "option_d": "以上都可以",
+      "option_e": "",
+      "score_a": 2,
+      "score_b": 3,
+      "score_c": 2,
+      "score_d": 4,
+      "score_e": 0,
+      "explanation": "创意没有标准答案，但要考虑实用性和可行性",
+      "tags": "想象力,设计思维",
+      "is_active": 1
+    },
+    {
+      "id": 3,
+      "question_id": "Q3_G1_03",
+      "grade_level": 1,
+      "dimension": "concept",
+      "difficulty": 1,
+      "question_type": "choice",
+      "question_text": "编程是什么？",
+      "option_a": "玩游戏",
+      "option_b": "用电脑命令让机器做事",
+      "option_c": "看电视",
+      "option_d": "画画",
+      "option_e": "",
+      "score_a": 0,
+      "score_b": 4,
+      "score_c": 0,
+      "score_d": 1,
+      "score_e": 0,
+      "explanation": "编程是编写指令让计算机执行任务的过程",
+      "tags": "基础概念",
+      "is_active": 1
+    },
+    {
+      "id": 4,
+      "question_id": "Q4_G1_04",
+      "grade_level": 1,
+      "dimension": "focus",
+      "difficulty": 2,
+      "question_type": "practical",
+      "question_text": "你能坚持完成一个困难的拼图吗？",
+      "option_a": "马上就放弃",
+      "option_b": "试试看，不行就放弃",
+      "option_c": "坚持完成",
+      "option_d": "找人帮忙",
+      "option_e": "",
+      "score_a": 0,
+      "score_b": 2,
+      "score_c": 4,
+      "score_d": 2,
+      "score_e": 0,
+      "explanation": "专注力和毅力是编程学习的重要品质",
+      "tags": "毅力,专注",
+      "is_active": 1
+    },
+    {
+      "id": 5,
+      "question_id": "Q5_G1_05",
+      "grade_level": 1,
+      "dimension": "collaboration",
+      "difficulty": 2,
+      "question_type": "scenario",
+      "question_text": "小组做项目时，你愿意？",
+      "option_a": "自己单独做",
+      "option_b": "和大家一起讨论",
+      "option_c": "让他人做得多",
+      "option_d": "随便",
+      "option_e": "",
+      "score_a": 1,
+      "score_b": 4,
+      "score_c": 2,
+      "score_d": 0,
+      "score_e": 0,
+      "explanation": "团队协作需要沟通和分工",
+      "tags": "沟通,合作",
+      "is_active": 1
+    }
+  ],
+  "assessments": [
+    {
+      "id": 1,
+      "assessment_no": "ASMT17779436144380q09b",
+      "student_name": "钟毓辰",
+      "gender": "F",
+      "birth_date": "2017-11-13",
+      "grade_level": 1,
+      "has_programming_exp": 0,
+      "programming_exp_desc": null,
+      "start_time": "2026-05-05T01:13:34.438Z",
+      "end_time": "2026-05-05T01:13:53.722Z",
+      "duration": 19,
+      "status": "completed",
+      "logic_score": 100,
+      "creativity_score": 0,
+      "concept_score": 0,
+      "focus_score": 0,
+      "collaboration_score": 100,
+      "total_score": 40,
+      "report_url": null,
+      "created_at": "2026-05-05T01:13:34.438Z",
+      "updated_at": "2026-05-05T01:13:53.722Z"
+    }
+  ],
+  "answers": [
+    {
+      "id": 1,
+      "assessment_id": 1,
+      "question_id": 1,
+      "selected_option": "A",
+      "score": 4,
+      "time_spent": 3,
+      "created_at": "2026-05-05T01:13:53.686Z"
+    },
+    {
+      "id": 2,
+      "assessment_id": 1,
+      "question_id": 3,
+      "selected_option": "A",
+      "score": 0,
+      "time_spent": 3,
+      "created_at": "2026-05-05T01:13:53.699Z"
+    },
+    {
+      "id": 3,
+      "assessment_id": 1,
+      "question_id": 5,
+      "selected_option": "B",
+      "score": 4,
+      "time_spent": 3,
+      "created_at": "2026-05-05T01:13:53.710Z"
+    }
+  ],
+  "result_interpretations": [
+    {
+      "id": 1,
+      "dimension": "logic",
+      "grade_level": 1,
+      "score_range_start": 0,
+      "score_range_end": 40,
+      "level": "待提高",
+      "interpretation": "逻辑思维还在发展中，需要通过游戏和简单练习培养。",
+      "suggestions": "建议从简单的分类、排序游戏开始，培养基础逻辑感。",
+      "course_recommendations": "[\"乐高建构\", \"逻辑思维启蒙\"]"
+    },
+    {
+      "id": 2,
+      "dimension": "logic",
+      "grade_level": 1,
+      "score_range_start": 40,
+      "score_range_end": 70,
+      "level": "中等",
+      "interpretation": "具备基础逻辑思维能力，可以开始系统学习。",
+      "suggestions": "通过编程游戏和图形化编程培养逻辑思维能力。",
+      "course_recommendations": "[\"ScratchJR\", \"逻辑思维训练\"]"
+    },
+    {
+      "id": 3,
+      "dimension": "logic",
+      "grade_level": 1,
+      "score_range_start": 70,
+      "score_range_end": 101,
+      "level": "优秀",
+      "interpretation": "逻辑思维能力突出，具备良好的问题分析能力。",
+      "suggestions": "可以继续深入学习，尝试更复杂的编程项目和逻辑挑战。",
+      "course_recommendations": "[\"Scratch编程\", \"机器人入门\"]"
+    }
+  ],
+  "course_recommendations": [
+    {
+      "id": 1,
+      "course_code": "LEGO_001",
+      "course_name": "乐高建构启蒙",
+      "category": "lego",
+      "suitable_grade": 1,
+      "suitable_dimensions": "logic,creativity,focus",
+      "description": "通过乐高积木搭建，培养空间思维和创造力",
+      "features": "[\"动手实践\", \"创意搭建\", \"团队合作\"]",
+      "outcomes": "[\"空间想象力\", \"动手能力\", \"逻辑思维\"]",
+      "duration": 16,
+      "price": 1280,
+      "is_active": 1
+    },
+    {
+      "id": 2,
+      "course_code": "SCRATCH_001",
+      "course_name": "ScratchJR动画编程",
+      "category": "programming",
+      "suitable_grade": 1,
+      "suitable_dimensions": "logic,creativity,concept",
+      "description": "使用ScratchJR创作互动故事和游戏",
+      "features": "[\"图形化编程\", \"故事创作\", \"逻辑序列\"]",
+      "outcomes": "[\"基础编程概念\", \"创意表达\", \"逻辑思考\"]",
+      "duration": 24,
+      "price": 1680,
+      "is_active": 1
+    },
+    {
+      "id": 3,
+      "course_code": "ROBOT_001",
+      "course_name": "机器人入门",
+      "category": "robot",
+      "suitable_grade": 2,
+      "suitable_dimensions": "logic,creativity,focus,collaboration",
+      "description": "学习机器人搭建和基础编程控制",
+      "features": "[\"LEGO EV3\", \"传感器应用\", \"任务挑战\"]",
+      "outcomes": "[\"工程思维\", \"编程逻辑\", \"问题解决\"]",
+      "duration": 32,
+      "price": 2380,
+      "is_active": 1
+    }
+  ],
+  "system_config": [
+    {
+      "id": 1,
+      "config_key": "site_name",
+      "config_value": "爱创发明 - 青少年编程天赋测评",
+      "description": "站点名称"
+    },
+    {
+      "id": 2,
+      "config_key": "logo_url",
+      "config_value": "/images/logo.png",
+      "description": "Logo URL"
+    },
+    {
+      "id": 3,
+      "config_key": "primary_color",
+      "config_value": "#FF6B35",
+      "description": "主题色（橙）"
+    },
+    {
+      "id": 4,
+      "config_key": "secondary_color",
+      "config_value": "#4ECDC4",
+      "description": "辅助色（青）"
+    },
+    {
+      "id": 5,
+      "config_key": "questions_per_assessment",
+      "config_value": "10",
+      "description": "每次测评题目数"
+    },
+    {
+      "id": 6,
+      "config_key": "time_limit",
+      "config_value": "1800",
+      "description": "测评时间限制（秒）"
+    },
+    {
+      "id": 7,
+      "config_key": "pass_score",
+      "config_value": "60",
+      "description": "通过分数"
+    }
+  ]
+}
