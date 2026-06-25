@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JYUGIS课程达成度分析工具 v0.47</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#f0f2f5;color:#333;line-height:1.6}
+.header{background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;padding:24px 0;text-align:center}
+.header h1{font-size:28px;font-weight:600}
+.header p{font-size:14px;opacity:.85;margin-top:6px}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.step{background:#fff;border-radius:12px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden}
+.step-header{padding:16px 24px;background:#fafbfc;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.step-header:hover{background:#f0f5ff}
+.step-num{width:32px;height:32px;border-radius:50%;background:#1a73e8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.step-title{font-size:16px;font-weight:600}
+.step-body{padding:24px;display:none}
+.step-body.active{display:block}
+.method-cards{display:flex;gap:16px;flex-wrap:wrap}
+.method-card{flex:1;min-width:280px;border:2px solid #e0e0e0;border-radius:10px;padding:20px;cursor:pointer;transition:all .2s}
+.method-card:hover{border-color:#1a73e8;background:#f0f5ff}
+.method-card.selected{border-color:#1a73e8;background:#e8f0fe;box-shadow:0 0 0 3px rgba(26,115,232,.2)}
+.method-card h3{font-size:16px;margin-bottom:8px;color:#1a73e8}
+.method-card p{font-size:13px;color:#666}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-left:8px}
+.badge-a{background:#e8f5e9;color:#2e7d32}
+.badge-b{background:#fff3e0;color:#e65100}
+.btn{padding:10px 24px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:#1a73e8;color:#fff}
+.btn-primary:hover{background:#1557b0}
+.btn-primary:disabled{background:#94baf5;cursor:not-allowed}
+.btn-secondary{background:#f5f5f5;color:#333;border:1px solid #ddd}
+.btn-secondary:hover{background:#e8e8e8}
+.upload-area{border:2px dashed #ccc;border-radius:10px;padding:48px;text-align:center;cursor:pointer;transition:all .2s}
+.upload-area:hover{border-color:#1a73e8;background:#f0f5ff}
+.upload-area.dragover{border-color:#1a73e8;background:#e8f0fe}
+.upload-icon{font-size:48px;color:#aaa;margin-bottom:12px}
+.upload-text{font-size:14px;color:#666}
+.upload-text strong{color:#1a73e8}
+.preview-table-wrap{margin-top:16px;max-height:400px;overflow:auto;border:1px solid #e0e0e0;border-radius:8px}
+.preview-table{width:100%;border-collapse:collapse;font-size:13px}
+.preview-table th{background:#f5f7fa;padding:8px 12px;text-align:left;font-weight:600;position:sticky;top:0;border-bottom:2px solid #ddd}
+.preview-table td{padding:6px 12px;border-bottom:1px solid #eee}
+.preview-table tr:hover{background:#f0f5ff}
+.config-section{margin-top:16px}
+.config-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end}
+.config-group{display:flex;flex-direction:column;gap:4px}
+.config-group label{font-size:13px;font-weight:600;color:#555}
+.config-group input,.config-group select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:120px}
+.config-group input:focus,.config-group select:focus{outline:none;border-color:#1a73e8;box-shadow:0 0 0 2px rgba(26,115,232,.15)}
+.weight-matrix{overflow:auto;margin-top:12px}
+.weight-matrix table{border-collapse:collapse;font-size:13px;width:100%}
+.weight-matrix th,.weight-matrix td{border:1px solid #ddd;padding:8px 10px;text-align:center}
+.weight-matrix th{background:#f5f7fa;font-weight:600}
+.weight-matrix input{width:70px;padding:4px 6px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:13px}
+.weight-matrix input:focus{border-color:#1a73e8;outline:none}
+.weight-matrix .total-cell{background:#e8f0fe;font-weight:700;color:#1a73e8;min-width:60px}
+.result-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}
+.result-card{background:#fff;border-radius:10px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:4px solid #1a73e8}
+.result-card .value{font-size:36px;font-weight:700;color:#1a73e8}
+.result-card .label{font-size:13px;color:#666;margin-top:4px}
+.result-card.excellent{border-top-color:#2e7d32}
+.result-card.excellent .value{color:#2e7d32}
+.result-card.good{border-top-color:#1a73e8}
+.result-card.good .value{color:#1a73e8}
+.result-card.medium{border-top-color:#f9a825}
+.result-card.medium .value{color:#f9a825}
+.result-card.fail{border-top-color:#c62828}
+.result-card.fail .value{color:#c62828}
+.report-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.report-table th{background:#1a73e8;color:#fff;padding:12px 16px;text-align:center}
+.report-table td{padding:10px 16px;border:1px solid #e0e0e0;text-align:center}
+.report-table tr:nth-child(even){background:#f9fafb}
+.report-table tr:hover{background:#e8f0fe}
+.report-table .total-row{background:#e8f0fe;font-weight:700}
+.chart-row{display:flex;gap:20px;flex-wrap:wrap;margin:20px 0}
+.chart-box{flex:1;min-width:300px;background:#fff;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.chart-box h4{text-align:center;margin-bottom:12px;font-size:14px;color:#555}
+canvas{max-width:100%}
+.eval-box{background:#f5f7fa;border-radius:10px;padding:20px;margin:16px 0;border-left:4px solid #1a73e8}
+.eval-box h4{margin-bottom:10px;font-size:15px}
+.eval-box ul{margin-left:20px;font-size:14px}
+.eval-box li{margin-bottom:6px}
+.eval-box .grade{font-size:20px;font-weight:700;margin-bottom:8px}
+.eval-box .grade.excellent{color:#2e7d32}
+.eval-box .grade.good{color:#1a73e8}
+.eval-box .grade.medium{color:#f9a825}
+.eval-box .grade.fail{color:#c62828}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;background:#f0f0f0;color:#666}
+.tab.active{background:#1a73e8;color:#fff}
+.btn-group{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.add-btn{padding:6px 14px;border:1px dashed #aaa;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;color:#666}
+.add-btn:hover{border-color:#1a73e8;color:#1a73e8}
+.del-btn{padding:4px 10px;border:none;border-radius:4px;background:#ffebee;color:#c62828;cursor:pointer;font-size:12px}
+.del-btn:hover{background:#ffcdd2}
+.info-text{font-size:13px;color:#888;margin-top:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:16px 0}
+.stat-item{background:#fff;border-radius:8px;padding:12px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.stat-item .num{font-size:24px;font-weight:700;color:#1a73e8}
+.stat-item .desc{font-size:12px;color:#888;margin-top:4px}
+.print-btn{position:fixed;bottom:24px;right:24px;z-index:100}
+.class-tabs{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap}
+.class-tab{padding:6px 16px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:#e8e8e8;color:#666;border:2px solid transparent}
+.class-tab.active{background:#e8f0fe;color:#1a73e8;border-color:#1a73e8}
+.class-tab:hover{background:#f0f5ff}
+.detail-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.detail-table th{background:#f5f7fa;padding:8px 10px;text-align:center;font-weight:600;border:1px solid #ddd}
+.detail-table td{padding:6px 10px;text-align:center;border:1px solid #eee}
+.detail-table tr:hover{background:#f0f5ff}
+.detail-table .highlight{background:#e8f0fe;font-weight:600}
+.warning-box{background:#fff3e0;border-left:4px solid #f9a825;padding:12px 16px;border-radius:6px;margin:12px 0;font-size:13px}
+.success-box{background:#e8f5e9;border-left:4px solid #2e7d32;padding:12px 16px;border-radius:6px;margin:12px 0;font-size:13px}
+@media print{.no-print{display:none!important}.step-body{display:block!important}}
+@media(max-width:768px){.method-cards{flex-direction:column}.config-row{flex-direction:column}.config-group input{width:100%}.chart-row{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>JYUGIS课程达成度分析工具 v0.47</h1>
+  <p>支持等级加权法（方案A）和权重分配法（方案B）| 支持多班级分班与合并分析</p>
+</div>
+
+<div class="container">
+
+<!-- Step 1: 选择方案 -->
+<div class="step">
+  <div class="step-header" onclick="toggleStep(1)">
+    <div class="step-num">1</div>
+    <div class="step-title">选择达成度计算方案</div>
+  </div>
+  <div class="step-body active" id="step1">
+    <div class="method-cards">
+      <div class="method-card" id="cardA" onclick="selectMethod('A')">
+        <h3>方案A：等级加权法 <span class="badge badge-a">偏文科类课程</span></h3>
+        <p><strong>适用课程</strong>：偏文科类考试课程（如人文地理学等，借鉴师范认证）</p>
+        <p style="margin-top:8px"><strong>计算逻辑</strong>：学生得分率 → 等级分布 → 加权计算最终达成度</p>
+        <p style="margin-top:8px"><strong>核心输入</strong>：支撑权重表（每目标×每环节权重系数）</p>
+      </div>
+      <div class="method-card selected" id="cardB" onclick="selectMethod('B')">
+        <h3>方案B：权重分配法 <span class="badge badge-b">偏理工实践类课程</span></h3>
+        <p><strong>适用课程</strong>：实践+考试课程（如Python编程等）</p>
+        <p style="margin-top:8px"><strong>计算逻辑</strong>：考核环节得分 → 支撑比例 → 直接除以目标总分</p>
+        <p style="margin-top:8px"><strong>核心输入</strong>：支撑矩阵（每目标×每环节百分比）+ 环节权重</p>
+      </div>
+    </div>
+    <div class="btn-group" style="margin-top:16px">
+      <button class="btn btn-primary" onclick="goStep(2)">下一步：导入成绩</button>
+    </div>
+  </div>
+</div>
+
+<!-- Step 2: 导入Excel -->
+<div class="step">
+  <div class="step-header" onclick="toggleStep(2)">
+    <div class="step-num">2</div>
+    <div class="step-title">导入Excel成绩（支持多班级）</div>
+  </div>
+  <div class="step-body" id="step2">
+    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📂</div>
+      <div class="upload-text">点击或拖拽 Excel 文件到此处<br><strong>支持 .xlsx / .xls 格式 | 可一次选择多个班级Sheet</strong></div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="handleFile(event)">
+    </div>
+    <div id="sheetSelector" style="display:none;margin-top:16px">
+      <label style="font-weight:600;font-size:14px">选择班级工作表：</label>
+      <div class="class-tabs" id="classTabs"></div>
+      <span id="sheetInfo" style="margin-left:12px;font-size:13px;color:#888"></span>
+    </div>
+    <div class="preview-table-wrap" id="previewWrap" style="display:none"></div>
+    <div id="dataValidation" style="display:none;margin-top:16px"></div>
+    <div id="colMapping" style="display:none;margin-top:16px">
+      <h4 style="margin-bottom:12px;font-size:14px">列映射配置</h4>
+      <p style="font-size:13px;color:#888;margin-bottom:12px">请确认各列对应的含义，工具将自动识别学号、姓名和成绩列</p>
+      <div id="mappingRows"></div>
+    </div>
+    <div id="classManage" style="display:none;margin-top:16px">
+      <h4 style="margin-bottom:8px;font-size:14px">班级管理</h4>
+      <p style="font-size:13px;color:#888;margin-bottom:8px">点击"添加班级"将当前Sheet加入分析，支持多个班级对比和合并分析</p>
+      <div id="classList"></div>
+      <button class="add-btn" onclick="addCurrentSheetAsClass()" style="margin-top:8px">+ 添加当前Sheet为班级</button>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="goStep(1)">上一步</button>
+      <button class="btn btn-primary" id="btnToStep3" onclick="goStep(3)" disabled>下一步：配置权重</button>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3: 配置权重 -->
+<div class="step">
+  <div class="step-header" onclick="toggleStep(3)">
+    <div class="step-num">3</div>
+    <div class="step-title">配置权重参数</div>
+  </div>
+  <div class="step-body" id="step3">
+    <!-- 方案A配置 -->
+    <div id="configA" style="display:none">
+      <h4 style="margin-bottom:12px">方案A：等级加权法配置</h4>
+      <div class="config-section">
+        <h5 style="margin-bottom:8px;font-size:14px">考核方式与满分设置</h5>
+        <div id="assessListA"></div>
+        <button class="add-btn" onclick="addAssessA()">+ 添加考核方式</button>
+      </div>
+      <div class="config-section" style="margin-top:20px">
+        <h5 style="margin-bottom:8px;font-size:14px">课程目标配置</h5>
+        <div id="objectiveListA"></div>
+        <button class="add-btn" onclick="addObjectiveA()">+ 添加课程目标</button>
+      </div>
+      <div class="config-section" style="margin-top:20px">
+        <h5 style="margin-bottom:8px;font-size:14px">支撑权重矩阵</h5>
+        <p class="info-text">每行表示一个课程目标，列表示考核方式，数值为权重系数（0~1）</p>
+        <div class="weight-matrix" id="weightMatrixA"></div>
+      </div>
+      <div class="config-section" style="margin-top:20px">
+        <h5 style="margin-bottom:8px;font-size:14px">目标权重（合计应为100%）</h5>
+        <div id="targetWeightsA"></div>
+        <div id="targetWeightCheck"></div>
+      </div>
+      <div class="config-section" style="margin-top:20px">
+        <h5 style="margin-bottom:8px;font-size:14px">达成度等级划分标准</h5>
+        <div class="weight-matrix" id="gradeTable">
+          <table>
+            <tr><th>等级</th><th>得分率范围</th><th>系数</th></tr>
+            <tr><td>优秀</td><td>≥ <input type="number" id="gradeExcellentMin" value="85" style="width:60px">%</td><td><input type="number" id="gradeExcellentCoef" value="1.0" step="0.05" style="width:60px"></td></tr>
+            <tr><td>良好</td><td><input type="number" id="gradeGoodMin" value="70" style="width:60px">% ~ <span id="goodMaxDisplay">85</span>%</td><td><input type="number" id="gradeGoodCoef" value="0.85" step="0.05" style="width:60px"></td></tr>
+            <tr><td>中等</td><td><input type="number" id="gradeMediumMin" value="60" style="width:60px">% ~ <span id="mediumMaxDisplay">70</span>%</td><td><input type="number" id="gradeMediumCoef" value="0.7" step="0.05" style="width:60px"></td></tr>
+            <tr><td>及格</td><td><input type="number" id="gradePassMin" value="55" style="width:60px">% ~ <span id="passMaxDisplay">60</span>%</td><td><input type="number" id="gradePassCoef" value="0.55" step="0.05" style="width:60px"></td></tr>
+            <tr><td>不及格</td><td>&lt; <span id="failMaxDisplay">55</span>%</td><td><input type="number" id="gradeFailCoef" value="0.4" step="0.05" style="width:60px"></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- 方案B配置 -->
+    <div id="configB" style="display:none">
+      <h4 style="margin-bottom:12px">方案B：权重分配法配置</h4>
+      <div class="config-section">
+        <h5 style="margin-bottom:8px;font-size:14px">考核环节与权重</h5>
+        <div id="assessListB"></div>
+        <button class="add-btn" onclick="addAssessB()">+ 添加考核环节</button>
+        <div id="weightCheckB" class="info-text" style="margin-top:8px"></div>
+      </div>
+      <div class="config-section" style="margin-top:20px">
+        <h5 style="margin-bottom:8px;font-size:14px">课程目标配置</h5>
+        <div id="objectiveListB"></div>
+        <button class="add-btn" onclick="addObjectiveB()">+ 添加课程目标</button>
+      </div>
+      <div class="config-section" style="margin-top:20px">
+        <h5 style="margin-bottom:8px;font-size:14px">课程目标支撑矩阵</h5>
+        <p class="info-text">数值为该考核环节对课程目标的支撑百分比（0~100），右侧自动计算"分目标总分"</p>
+        <div class="weight-matrix" id="weightMatrixB"></div>
+      </div>
+      <div class="config-section" style="margin-top:20px">
+        <h5 style="margin-bottom:8px;font-size:14px">达成度评价标准</h5>
+        <div class="weight-matrix" id="gradeTableB">
+          <table>
+            <tr><th>达成度范围</th><th>评价等级</th></tr>
+            <tr><td>≥ 0.9（90%）</td><td style="color:#2e7d32;font-weight:600">优秀</td></tr>
+            <tr><td>[0.8, 0.9)（80%~90%）</td><td style="color:#1a73e8;font-weight:600">良好</td></tr>
+            <tr><td>[0.7, 0.8)（70%~80%）</td><td style="color:#f9a825;font-weight:600">中等</td></tr>
+            <tr><td>[0.6, 0.7)（60%~70%）</td><td style="color:#e65100;font-weight:600">及格</td></tr>
+            <tr><td>&lt; 0.6（60%）</td><td style="color:#c62828;font-weight:600">不及格</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="goStep(2)">上一步</button>
+      <button class="btn btn-primary" onclick="goStep(4)">下一步：计算达成度</button>
+    </div>
+  </div>
+</div>
+
+<!-- Step 4: 计算 -->
+<div class="step">
+  <div class="step-header" onclick="toggleStep(4)">
+    <div class="step-num">4</div>
+    <div class="step-title">计算达成度</div>
+  </div>
+  <div class="step-body" id="step4">
+    <div style="text-align:center;padding:20px">
+      <p style="font-size:14px;color:#666;margin-bottom:16px">确认配置无误后，点击下方按钮开始计算</p>
+      <div id="calcModeSelect" style="margin-bottom:16px">
+        <label style="font-weight:600;margin-right:16px">分析模式：</label>
+        <label style="cursor:pointer;margin-right:16px"><input type="radio" name="calcMode" value="perClass" checked> 分班级分析</label>
+        <label style="cursor:pointer;margin-right:16px"><input type="radio" name="calcMode" value="overall"> 课程整体分析（合并所有班级）</label>
+        <label style="cursor:pointer"><input type="radio" name="calcMode" value="both"> 两者都生成</label>
+      </div>
+      <button class="btn btn-primary" style="font-size:16px;padding:14px 40px" onclick="calculate()">开始计算</button>
+    </div>
+    <div class="btn-group" style="justify-content:center">
+      <button class="btn btn-secondary" onclick="goStep(3)">返回修改配置</button>
+    </div>
+  </div>
+</div>
+
+<!-- Step 5: 报告 -->
+<div class="step">
+  <div class="step-header" onclick="toggleStep(5)">
+    <div class="step-num">5</div>
+    <div class="step-title">分析报告</div>
+  </div>
+  <div class="step-body" id="step5">
+    <div id="reportTabs" class="class-tabs no-print" style="display:none"></div>
+    <div id="reportContent"></div>
+    <div class="btn-group no-print" style="margin-top:20px;justify-content:center">
+      <button class="btn btn-primary" onclick="window.print()">打印报告</button>
+      <button class="btn btn-secondary" onclick="exportReport()">导出为HTML</button>
+      <button class="btn btn-secondary" onclick="exportMarkdown()">导出为Markdown</button>
+      <button class="btn btn-secondary" onclick="goStep(3)">重新配置</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+let method = 'B';
+let workbook = null;
+let allSheetData = {};
+let classes = [];
+let currentSheetIdx = 0;
+let colMapping = {};
+let assessA = [];
+let assessB = [];
+let objectivesA = [];
+let objectivesB = [];
+let weightMatrixA = {};
+let weightMatrixB = {};
+let targetWeightsA = {};
+let charts = {};
+let allResults = {};
+
+function toggleStep(n) {
+  document.getElementById('step' + n).classList.toggle('active');
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step-body').forEach(b => b.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  if (n === 3) initConfig();
+  if (n === 4) updateCalcModeUI();
+}
+
+function selectMethod(m) {
+  method = m;
+  document.getElementById('cardA').classList.toggle('selected', m === 'A');
+  document.getElementById('cardB').classList.toggle('selected', m === 'B');
+}
+
+// === File handling ===
+const uploadArea = document.getElementById('uploadArea');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+});
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    workbook = XLSX.read(e.target.result, { type: 'array' });
+    classes = [];
+    allSheetData = {};
+    renderClassTabs();
+    document.getElementById('sheetSelector').style.display = 'block';
+    document.getElementById('classManage').style.display = 'block';
+    if (workbook.SheetNames.length > 0) {
+      loadSheet(0);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderClassTabs() {
+  const tabs = document.getElementById('classTabs');
+  tabs.innerHTML = '';
+  workbook.SheetNames.forEach((name, i) => {
+    const tab = document.createElement('div');
+    tab.className = 'class-tab' + (i === currentSheetIdx ? ' active' : '');
+    tab.textContent = name;
+    tab.onclick = () => loadSheet(i);
+    const inUse = classes.find(c => c.sheetIdx === i);
+    if (inUse) {
+      tab.style.borderBottom = '3px solid #2e7d32';
+      tab.title = '已添加为班级: ' + inUse.name;
+    }
+    tabs.appendChild(tab);
+  });
+}
+
+function loadSheet(idx) {
+  currentSheetIdx = idx;
+  renderClassTabs();
+  const sheet = workbook.Sheets[workbook.SheetNames[idx]];
+  const json = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+  if (json.length === 0) return;
+
+  const rawHeaders = json[0];
+  const headerMap = [];
+  let colIdx = 0;
+  for (let i = 0; i < rawHeaders.length; i++) {
+    const h = rawHeaders[i];
+    if (h !== undefined && h !== null && String(h).trim() !== '') {
+      headerMap.push({ origCol: i, header: String(h).trim() });
+    }
+  }
+
+  const cleanHeaders = headerMap.map(h => h.header);
+  const cleanData = [];
+  for (let r = 1; r < json.length; r++) {
+    const row = json[r];
+    const hasData = row.some(c => c !== undefined && c !== null && c !== '');
+    if (!hasData) continue;
+    const cleanRow = headerMap.map(h => row[h.origCol]);
+    cleanData.push(cleanRow);
+  }
+
+  const sheetName = workbook.SheetNames[idx];
+  allSheetData[idx] = { headers: cleanHeaders, data: cleanData, headerMap, rawHeaders: rawHeaders, rawSheet: json, sheetName };
+
+  document.getElementById('sheetInfo').textContent = `${sheetName} — 共 ${cleanData.length} 条原始行，${cleanHeaders.length} 列`;
+  renderPreview(cleanHeaders, cleanData);
+  renderDataValidation(cleanHeaders, cleanData);
+  autoDetectColumns(cleanHeaders);
+  document.getElementById('colMapping').style.display = 'block';
+  document.getElementById('btnToStep3').disabled = false;
+  renderClassList();
+}
+
+function renderPreview(headers, data) {
+  const wrap = document.getElementById('previewWrap');
+  wrap.style.display = 'block';
+  let html = '<table class="preview-table"><thead><tr><th>#</th>';
+  headers.forEach(h => { html += `<th>${h}</th>`; });
+  html += '</tr></thead><tbody>';
+  const show = data.slice(0, 10);
+  show.forEach((row, i) => {
+    html += `<tr><td>${i + 1}</td>`;
+    headers.forEach((_, j) => { html += `<td>${row[j] !== undefined && row[j] !== '' ? row[j] : ''}</td>`; });
+    html += '</tr>';
+  });
+  if (data.length > 10) html += `<tr><td colspan="${headers.length + 1}" style="text-align:center;color:#999">... 还有 ${data.length - 10} 条数据</td></tr>`;
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function renderDataValidation(headers, data) {
+  const div = document.getElementById('dataValidation');
+  div.style.display = 'block';
+
+  const idKeywords = ['学号', '编号', '序号', '号'];
+  const nameKeywords = ['姓名', '名字'];
+  let idIdx = -1, nameIdx = -1;
+  const scoreIndices = [];
+
+  headers.forEach((h, i) => {
+    if (idKeywords.some(k => h.includes(k))) idIdx = i;
+    else if (nameKeywords.some(k => h.includes(k))) nameIdx = i;
+    else scoreIndices.push(i);
+  });
+
+  const studentRows = data.filter(row => {
+    const id = String(row[idIdx] || '').trim();
+    return id !== '' && id !== 'undefined' && /\d/.test(id);
+  });
+
+  const scoreStats = scoreIndices.map(ci => {
+    const vals = studentRows.map(r => parseFloat(r[ci])).filter(v => !isNaN(v));
+    const min = vals.length > 0 ? Math.min(...vals) : '-';
+    const max = vals.length > 0 ? Math.max(...vals) : '-';
+    const avg = vals.length > 0 ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2) : '-';
+    return { name: headers[ci], count: vals.length, min, max, avg };
+  });
+
+  let html = '<div style="background:#fff;border-radius:10px;padding:20px;border:2px solid #1a73e8">';
+  html += '<h4 style="margin-bottom:12px;color:#1a73e8">📋 数据校验报告</h4>';
+
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px">';
+  html += `<div class="stat-item"><div class="num">${studentRows.length}</div><div class="desc">学生人数（按学号统计）</div></div>`;
+  html += `<div class="stat-item"><div class="num">${scoreIndices.length}</div><div class="desc">成绩列数</div></div>`;
+  html += `<div class="stat-item"><div class="num">${data.length - studentRows.length}</div><div class="desc">已过滤非学生行</div></div>`;
+  html += '</div>';
+
+  html += '<h5 style="margin:12px 0 8px;font-size:13px">各成绩列统计（仅统计有效学生）：</h5>';
+  html += '<table class="detail-table"><tr><th>列名</th><th>有效值数</th><th>最低分</th><th>最高分</th><th>平均分</th></tr>';
+  scoreStats.forEach(s => {
+    html += `<tr><td style="font-weight:600">${s.name}</td><td>${s.count}</td><td>${s.min}</td><td>${s.max}</td><td>${s.avg}</td></tr>`;
+  });
+  html += '</table>';
+
+  if (scoreStats.some(s => s.count !== studentRows.length)) {
+    html += '<div class="warning-box" style="margin-top:12px">';
+    html += '<strong>⚠️ 部分成绩列数据不完整：</strong><br>';
+    scoreStats.forEach(s => {
+      if (s.count < studentRows.length) html += `&nbsp;&nbsp;· 「${s.name}」仅有 ${s.count}/${studentRows.length} 人有成绩<br>`;
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="success-box" style="margin-top:12px">✅ 数据校验通过</div>';
+  }
+
+  html += '</div>';
+  div.innerHTML = html;
+}
+
+function autoDetectColumns(headers) {
+  const idKeywords = ['学号', '编号', '序号', '号'];
+  const nameKeywords = ['姓名', '名字'];
+  colMapping = { id: -1, name: -1, scores: [] };
+  const mappingDiv = document.getElementById('mappingRows');
+  let html = '<div class="config-row">';
+  html += '<div class="config-group"><label>学号列</label><select id="mapId"><option value="-1">-- 请选择 --</option>';
+  headers.forEach((h, i) => { html += `<option value="${i}">${h}</option>`; });
+  html += '</select></div>';
+  html += '<div class="config-group"><label>姓名列</label><select id="mapName"><option value="-1">-- 请选择 --</option>';
+  headers.forEach((h, i) => { html += `<option value="${i}">${h}</option>`; });
+  html += '</select></div>';
+  html += '</div>';
+  html += '<div style="margin-top:12px"><label style="font-weight:600;font-size:14px">成绩列（勾选需要分析的成绩项）：</label>';
+  html += '<div class="config-row" style="flex-wrap:wrap;margin-top:8px">';
+  headers.forEach((h, i) => {
+    const skip = idKeywords.some(k => h.includes(k)) || nameKeywords.some(k => h.includes(k));
+    html += `<label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer">
+      <input type="checkbox" class="scoreCol" value="${i}" ${!skip ? 'checked' : ''}> ${h}</label>`;
+  });
+  html += '</div></div>';
+  mappingDiv.innerHTML = html;
+
+  setTimeout(() => {
+    headers.forEach((h, i) => {
+      if (idKeywords.some(k => h.includes(k))) document.getElementById('mapId').value = i;
+      if (nameKeywords.some(k => h.includes(k))) document.getElementById('mapName').value = i;
+    });
+  }, 100);
+}
+
+function addCurrentSheetAsClass() {
+  const data = allSheetData[currentSheetIdx];
+  if (!data) { alert('请先加载Sheet'); return; }
+  const name = prompt('请输入班级名称：', data.sheetName);
+  if (!name) return;
+  classes.push({
+    name: name,
+    sheetIdx: currentSheetIdx,
+    headers: data.headers,
+    sheetData: data.data
+  });
+  renderClassTabs();
+  renderClassList();
+}
+
+function removeClass(idx) {
+  classes.splice(idx, 1);
+  renderClassTabs();
+  renderClassList();
+}
+
+function renderClassList() {
+  const div = document.getElementById('classList');
+  if (classes.length === 0) {
+    div.innerHTML = '<p style="color:#888;font-size:13px">尚未添加任何班级，请先加载Sheet后点击"添加当前Sheet为班级"</p>';
+    return;
+  }
+  let html = '<table class="detail-table"><tr><th>班级名称</th><th>数据行数</th><th>成绩列数</th><th>操作</th></tr>';
+  classes.forEach((c, i) => {
+    const scoreCount = getScoreCols(c.headers).length;
+    html += `<tr><td>${c.name}</td><td>${c.sheetData.length}</td><td>${scoreCount}</td>
+      <td><button class="del-btn" onclick="removeClass(${i})">移除</button></td></tr>`;
+  });
+  html += '</table>';
+  div.innerHTML = html;
+}
+
+function getScoreCols(headers) {
+  const idKeywords = ['学号', '编号', '序号', '号'];
+  const nameKeywords = ['姓名', '名字'];
+  return headers.filter(h => !idKeywords.some(k => h.includes(k)) && !nameKeywords.some(k => h.includes(k)));
+}
+
+// === Config ===
+function initConfig() {
+  let scoreHeaders = [];
+  if (classes.length > 0) {
+    scoreHeaders = getScoreCols(classes[0].headers);
+  } else if (allSheetData[currentSheetIdx]) {
+    const checkedScores = [...document.querySelectorAll('.scoreCol:checked')].map(c => parseInt(c.value));
+    scoreHeaders = checkedScores.map(i => allSheetData[currentSheetIdx].headers[i]);
+  }
+
+  if (method === 'A') {
+    document.getElementById('configA').style.display = 'block';
+    document.getElementById('configB').style.display = 'none';
+    if (assessA.length === 0 && scoreHeaders.length > 0) {
+      assessA = scoreHeaders.map(h => ({ name: h, maxScore: 100 }));
+      objectivesA = [{ name: '目标1' }, { name: '目标2' }, { name: '目标3' }];
+      scoreHeaders.forEach((sh, si) => {
+        objectivesA.forEach((obj, oi) => {
+          weightMatrixA[`${oi}_${si}`] = si === oi ? 1.0 : (oi < scoreHeaders.length ? 0.2 : 0);
+        });
+      });
+      objectivesA.forEach((_, oi) => { targetWeightsA[oi] = Math.round(100 / objectivesA.length); });
+    }
+    renderConfigA();
+  } else {
+    document.getElementById('configA').style.display = 'none';
+    document.getElementById('configB').style.display = 'block';
+    if (assessB.length === 0 && scoreHeaders.length > 0) {
+      assessB = scoreHeaders.map(h => ({ name: h, weight: Math.round(100 / scoreHeaders.length) }));
+      objectivesB = [{ name: '目标1' }, { name: '目标2' }, { name: '目标3' }];
+      scoreHeaders.forEach((_, si) => {
+        objectivesB.forEach((_, oi) => {
+          weightMatrixB[`${oi}_${si}`] = 30;
+        });
+      });
+    }
+    renderConfigB();
+  }
+}
+
+function renderConfigA() {
+  let html = '';
+  assessA.forEach((a, i) => {
+    html += `<div class="config-row">
+      <div class="config-group"><label>考核方式名称</label><input type="text" value="${a.name}" onchange="assessA[${i}].name=this.value;renderConfigA()"></div>
+      <div class="config-group"><label>满分</label><input type="number" value="${a.maxScore}" onchange="assessA[${i}].maxScore=+this.value" style="width:80px"></div>
+      <button class="del-btn" onclick="assessA.splice(${i},1);renderConfigA()">删除</button>
+    </div>`;
+  });
+  document.getElementById('assessListA').innerHTML = html;
+
+  html = '';
+  objectivesA.forEach((o, i) => {
+    html += `<div class="config-row">
+      <div class="config-group"><label>课程目标${i + 1}名称</label><input type="text" value="${o.name}" onchange="objectivesA[${i}].name=this.value" style="width:200px"></div>
+      <button class="del-btn" onclick="objectivesA.splice(${i},1);renderConfigA()">删除</button>
+    </div>`;
+  });
+  document.getElementById('objectiveListA').innerHTML = html;
+
+  let thtml = '<table><tr><th>课程目标</th>';
+  assessA.forEach(a => { thtml += `<th>${a.name}</th>`; });
+  thtml += '</tr>';
+  objectivesA.forEach((o, oi) => {
+    thtml += `<tr><td style="text-align:left;font-weight:600">${o.name}</td>`;
+    assessA.forEach((_, si) => {
+      const val = weightMatrixA[`${oi}_${si}`] || 0;
+      thtml += `<td><input type="number" value="${val}" step="0.01" min="0" max="1" onchange="weightMatrixA['${oi}_${si}']=+this.value"></td>`;
+    });
+    thtml += '</tr>';
+  });
+  thtml += '</table>';
+  document.getElementById('weightMatrixA').innerHTML = thtml;
+
+  html = '<div class="config-row">';
+  objectivesA.forEach((o, i) => {
+    html += `<div class="config-group"><label>${o.name}权重(%)</label><input type="number" value="${targetWeightsA[i] || 0}" min="0" max="100" onchange="targetWeightsA[${i}]=+this.value;checkTargetWeights()" style="width:80px"></div>`;
+  });
+  html += '</div>';
+  document.getElementById('targetWeightsA').innerHTML = html;
+  checkTargetWeights();
+}
+
+function checkTargetWeights() {
+  const total = Object.values(targetWeightsA).reduce((a, b) => a + b, 0);
+  const div = document.getElementById('targetWeightCheck');
+  if (Math.abs(total - 100) > 0.1) {
+    div.innerHTML = `<div class="warning-box">⚠️ 目标权重合计为 ${total}%，应为 100%</div>`;
+  } else {
+    div.innerHTML = `<div class="success-box">✅ 目标权重合计：100%</div>`;
+  }
+}
+
+function renderConfigB() {
+  let html = '';
+  assessB.forEach((a, i) => {
+    html += `<div class="config-row">
+      <div class="config-group"><label>环节名称</label><input type="text" value="${a.name}" onchange="assessB[${i}].name=this.value;renderConfigB()" style="width:150px"></div>
+      <div class="config-group"><label>权重(%)</label><input type="number" value="${a.weight}" min="0" max="100" onchange="assessB[${i}].weight=+this.value;renderConfigB()" style="width:80px"></div>
+      <button class="del-btn" onclick="assessB.splice(${i},1);renderConfigB()">删除</button>
+    </div>`;
+  });
+  document.getElementById('assessListB').innerHTML = html;
+
+  const totalWeight = assessB.reduce((a, b) => a + b.weight, 0);
+  const checkDiv = document.getElementById('weightCheckB');
+  if (assessB.length > 0) {
+    if (Math.abs(totalWeight - 100) > 0.1) {
+      checkDiv.innerHTML = `<div class="warning-box">⚠️ 权重合计：${totalWeight}%，应为 100%</div>`;
+    } else {
+      checkDiv.innerHTML = `<div class="success-box">✅ 权重合计：100%</div>`;
+    }
+  }
+
+  html = '';
+  objectivesB.forEach((o, i) => {
+    html += `<div class="config-row">
+      <div class="config-group"><label>课程目标${i + 1}名称</label><input type="text" value="${o.name}" onchange="objectivesB[${i}].name=this.value" style="width:200px"></div>
+      <button class="del-btn" onclick="objectivesB.splice(${i},1);renderConfigB()">删除</button>
+    </div>`;
+  });
+  document.getElementById('objectiveListB').innerHTML = html;
+
+  let thtml = '<table><tr><th>课程目标</th>';
+  assessB.forEach(a => { thtml += `<th>${a.name} (${a.weight}%)</th>`; });
+  thtml += '<th style="background:#e8f0fe;color:#1a73e8">分目标总分</th></tr>';
+  objectivesB.forEach((o, oi) => {
+    thtml += `<tr><td style="text-align:left;font-weight:600">${o.name}</td>`;
+    assessB.forEach((_, si) => {
+      const val = weightMatrixB[`${oi}_${si}`] || 0;
+      thtml += `<td><input type="number" value="${val}" min="0" max="100" onchange="weightMatrixB['${oi}_${si}']=+this.value;renderConfigB()" style="width:70px"></td>`;
+    });
+    const total = calcObjTotal(oi);
+    thtml += `<td class="total-cell">${total.toFixed(1)}</td></tr>`;
+  });
+  const totalRow = '<tr style="background:#f5f7fa;font-weight:600"><td>合计</td>';
+  let totalHtml = totalRow;
+  assessB.forEach((_, si) => {
+    let colTotal = 0;
+    objectivesB.forEach((_, oi) => { colTotal += (weightMatrixB[`${oi}_${si}`] || 0); });
+    totalHtml += `<td>${colTotal}</td>`;
+  });
+  totalHtml += '<td class="total-cell">' + objectivesB.reduce((a, _, i) => a + calcObjTotal(i), 0).toFixed(1) + '</td></tr>';
+  thtml += totalHtml + '</table>';
+  document.getElementById('weightMatrixB').innerHTML = thtml;
+}
+
+function calcObjTotal(oi) {
+  let total = 0;
+  assessB.forEach((a, si) => {
+    total += (weightMatrixB[`${oi}_${si}`] || 0) * (a.weight || 0) / 100;
+  });
+  return total;
+}
+
+function addAssessA() { assessA.push({ name: '新考核方式', maxScore: 100 }); renderConfigA(); }
+function addAssessB() { assessB.push({ name: '新环节', weight: 10 }); renderConfigB(); }
+function addObjectiveA() {
+  const n = objectivesA.length + 1;
+  objectivesA.push({ name: `目标${n}` });
+  targetWeightsA[objectivesA.length - 1] = 0;
+  assessA.forEach((_, si) => { weightMatrixA[`${objectivesA.length - 1}_${si}`] = 0; });
+  renderConfigA();
+}
+function addObjectiveB() {
+  const n = objectivesB.length + 1;
+  objectivesB.push({ name: `目标${n}` });
+  assessB.forEach((_, si) => { weightMatrixB[`${objectivesB.length - 1}_${si}`] = 0; });
+  renderConfigB();
+}
+
+function updateCalcModeUI() {
+  const hasMulti = classes.length > 1;
+  if (!hasMulti) {
+    document.querySelectorAll('input[name="calcMode"]').forEach(r => {
+      if (r.value === 'overall') r.disabled = true;
+      if (r.value === 'both') r.disabled = true;
+    });
+    document.querySelector('input[name="calcMode"][value="perClass"]').checked = true;
+  } else {
+    document.querySelectorAll('input[name="calcMode"]').forEach(r => r.disabled = false);
+  }
+}
+
+// === Calculation ===
+function getClassData(classInfo) {
+  const headers = classInfo.headers;
+  const sheetData = classInfo.sheetData;
+  const idKeywords = ['学号', '编号', '序号', '号'];
+  const nameKeywords = ['姓名', '名字'];
+  let idIdx = -1, nameIdx = -1;
+  const scoreIndices = [];
+  headers.forEach((h, i) => {
+    if (idKeywords.some(k => h.includes(k))) idIdx = i;
+    else if (nameKeywords.some(k => h.includes(k))) nameIdx = i;
+    else scoreIndices.push(i);
+  });
+  if (idIdx === -1 && nameIdx === -1 && scoreIndices.length > 0) {
+    idIdx = 0; nameIdx = 1;
+    scoreIndices.length = 0;
+    headers.forEach((_, i) => { if (i !== idIdx && i !== nameIdx) scoreIndices.push(i); });
+  }
+
+  return sheetData
+    .filter(row => {
+      const id = String(row[idIdx] || '').trim();
+      return id !== '' && id !== 'undefined' && /\d/.test(id);
+    })
+    .map(row => {
+      const obj = { id: row[idIdx] || '', name: row[nameIdx] || '', scores: {} };
+      scoreIndices.forEach((ci, si) => { obj.scores[si] = parseFloat(row[ci]) || 0; });
+      return obj;
+    });
+}
+
+function calculate() {
+  if (classes.length === 0) {
+    alert('请先添加至少一个班级');
+    return;
+  }
+
+  const calcMode = document.querySelector('input[name="calcMode"]:checked').value;
+  allResults = {};
+
+  if (calcMode === 'perClass' || calcMode === 'both') {
+    classes.forEach(c => {
+      const students = getClassData(c);
+      if (students.length > 0) {
+        allResults[c.name] = method === 'A' ? calcMethodA(students) : calcMethodB(students);
+        allResults[c.name].className = c.name;
+        allResults[c.name].studentCount = students.length;
+        allResults[c.name].students = students;
+      }
+    });
+  }
+
+  if ((calcMode === 'overall' || calcMode === 'both') && classes.length > 1) {
+    let allStudents = [];
+    classes.forEach(c => {
+      const students = getClassData(c);
+      students.forEach(s => { s.className = c.name; });
+      allStudents = allStudents.concat(students);
+    });
+    if (allStudents.length > 0) {
+      allResults['课程整体'] = method === 'A' ? calcMethodA(allStudents) : calcMethodB(allStudents);
+      allResults['课程整体'].className = '课程整体';
+      allResults['课程整体'].studentCount = allStudents.length;
+      allResults['课程整体'].students = allStudents;
+    }
+  }
+
+  if (Object.keys(allResults).length === 0) {
+    alert('没有可分析的数据');
+    return;
+  }
+
+  renderReport();
+  goStep(5);
+}
+
+function calcMethodA(students) {
+  const nAssess = assessA.length;
+  const nObj = objectivesA.length;
+
+  students.forEach(s => {
+    s.scoreRates = [];
+    for (let j = 0; j < nAssess; j++) {
+      s.scoreRates.push((s.scores[j] || 0) / assessA[j].maxScore * 100);
+    }
+  });
+
+  students.forEach(s => {
+    s.objRates = [];
+    for (let oi = 0; oi < nObj; oi++) {
+      let rate = 0;
+      for (let si = 0; si < nAssess; si++) {
+        rate += s.scoreRates[si] * (weightMatrixA[`${oi}_${si}`] || 0);
+      }
+      s.objRates.push(rate);
+    }
+    let comp = 0;
+    for (let oi = 0; oi < nObj; oi++) {
+      comp += s.objRates[oi] * (targetWeightsA[oi] || 0) / 100;
+    }
+    s.comprehensive = comp;
+  });
+
+  const avgObjRates = [];
+  for (let oi = 0; oi < nObj; oi++) {
+    const sum = students.reduce((a, s) => a + s.objRates[oi], 0);
+    avgObjRates.push(sum / students.length);
+  }
+
+  const gradeExMin = parseFloat(document.getElementById('gradeExcellentMin').value) || 85;
+  const gradeGoodMin = parseFloat(document.getElementById('gradeGoodMin').value) || 70;
+  const gradeMedMin = parseFloat(document.getElementById('gradeMediumMin').value) || 60;
+  const gradePassMin = parseFloat(document.getElementById('gradePassMin').value) || 55;
+
+  const gradeDistributions = [];
+  for (let oi = 0; oi < nObj; oi++) {
+    const dist = { excellent: 0, good: 0, medium: 0, pass: 0, fail: 0 };
+    students.forEach(s => {
+      const r = s.objRates[oi];
+      if (r >= gradeExMin) dist.excellent++;
+      else if (r >= gradeGoodMin) dist.good++;
+      else if (r >= gradeMedMin) dist.medium++;
+      else if (gradePassMin && r >= gradePassMin) dist.pass++;
+      else dist.fail++;
+    });
+    const total = students.length;
+    dist.excellentRate = dist.excellent / total * 100;
+    dist.goodRate = dist.good / total * 100;
+    dist.mediumRate = dist.medium / total * 100;
+    dist.passRate = dist.pass / total * 100;
+    dist.failRate = dist.fail / total * 100;
+    gradeDistributions.push(dist);
+  }
+
+  const cExcellent = parseFloat(document.getElementById('gradeExcellentCoef').value) || 1.0;
+  const cGood = parseFloat(document.getElementById('gradeGoodCoef').value) || 0.85;
+  const cMedium = parseFloat(document.getElementById('gradeMediumCoef').value) || 0.7;
+  const cPass = parseFloat(document.getElementById('gradePassCoef').value) || 0.55;
+  const cFail = parseFloat(document.getElementById('gradeFailCoef').value) || 0.4;
+
+  const finalAchievements = [];
+  for (let oi = 0; oi < nObj; oi++) {
+    const dist = gradeDistributions[oi];
+    const targetW = (targetWeightsA[oi] || 0);
+    const finalAch = avgObjRates[oi] * cExcellent
+      + targetW * cGood
+      + dist.excellentRate * cMedium
+      + dist.goodRate * cPass
+      + dist.mediumRate * cFail;
+    finalAchievements.push(finalAch);
+  }
+
+  const totalAchievement = finalAchievements.reduce((a, b) => a + b, 0) / nObj;
+
+  return {
+    method: 'A', nObj, nAssess,
+    avgObjRates, gradeDistributions, finalAchievements,
+    totalAchievement,
+    objectiveNames: objectivesA.map(o => o.name),
+    assessNames: assessA.map(a => a.name)
+  };
+}
+
+function calcMethodB(students) {
+  const nAssess = assessB.length;
+  const nObj = objectivesB.length;
+
+  const avgScores = [];
+  for (let si = 0; si < nAssess; si++) {
+    const sum = students.reduce((a, s) => a + (s.scores[si] || 0), 0);
+    avgScores.push(sum / students.length);
+  }
+
+  const objTotalScores = [];
+  for (let oi = 0; oi < nObj; oi++) {
+    let total = 0;
+    for (let si = 0; si < nAssess; si++) {
+      total += (weightMatrixB[`${oi}_${si}`] || 0) * (assessB[si].weight || 0) / 100;
+    }
+    objTotalScores.push(total);
+  }
+
+  const objContributions = [];
+  for (let oi = 0; oi < nObj; oi++) {
+    const contrib = [];
+    for (let si = 0; si < nAssess; si++) {
+      contrib.push(avgScores[si] * (weightMatrixB[`${oi}_${si}`] || 0) / 100 * (assessB[si].weight || 0) / 100);
+    }
+    objContributions.push(contrib);
+  }
+
+  const objectiveAchievements = [];
+  for (let oi = 0; oi < nObj; oi++) {
+    const actual = objContributions[oi].reduce((a, b) => a + b, 0);
+    objectiveAchievements.push(objTotalScores[oi] > 0 ? actual / objTotalScores[oi] : 0);
+  }
+
+  const totalAchievement = objectiveAchievements.reduce((a, b) => a + b, 0) / nObj;
+
+  students.forEach(s => {
+    s.objRates = [];
+    s.objContributions = [];
+    for (let oi = 0; oi < nObj; oi++) {
+      let actual = 0;
+      const contrib = [];
+      for (let si = 0; si < nAssess; si++) {
+        const c = (s.scores[si] || 0) * (weightMatrixB[`${oi}_${si}`] || 0) / 100 * (assessB[si].weight || 0) / 100;
+        contrib.push(c);
+        actual += c;
+      }
+      s.objContributions.push(contrib);
+      s.objRates.push(objTotalScores[oi] > 0 ? actual / objTotalScores[oi] : 0);
+    }
+  });
+
+  return {
+    method: 'B', nObj, nAssess,
+    avgScores, objTotalScores, objContributions, objectiveAchievements,
+    totalAchievement,
+    objectiveNames: objectivesB.map(o => o.name),
+    assessNames: assessB.map(a => a.name)
+  };
+}
+
+// === Report ===
+function renderReport() {
+  const keys = Object.keys(allResults);
+  const tabsDiv = document.getElementById('reportTabs');
+  if (keys.length > 1) {
+    tabsDiv.style.display = 'flex';
+    tabsDiv.innerHTML = '';
+    keys.forEach((k, i) => {
+      const tab = document.createElement('div');
+      tab.className = 'class-tab' + (i === 0 ? ' active' : '');
+      tab.textContent = k;
+      tab.onclick = () => {
+        tabsDiv.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderSingleReport(k);
+      };
+      tabsDiv.appendChild(tab);
+    });
+    renderSingleReport(keys[0]);
+  } else {
+    tabsDiv.style.display = 'none';
+    renderSingleReport(keys[0]);
+  }
+}
+
+function renderSingleReport(key) {
+  const result = allResults[key];
+  if (!result) return;
+  const wrap = document.getElementById('reportContent');
+  let html = '';
+
+  const gradeLabel = getGradeLabel(result.totalAchievement, result.method);
+  const gradeClass = getGradeClass(result.totalAchievement, result.method);
+  const totalStr = result.method === 'A' ? result.totalAchievement.toFixed(2) + '%' : (result.totalAchievement * 100).toFixed(2) + '%';
+
+  html += `<div class="result-summary">
+    <div class="result-card ${gradeClass}">
+      <div class="value">${totalStr}</div>
+      <div class="label">课程总达成度</div>
+    </div>
+    <div class="result-card">
+      <div class="value">${result.studentCount}</div>
+      <div class="label">分析学生人数</div>
+    </div>
+    <div class="result-card">
+      <div class="value">${result.nObj}</div>
+      <div class="label">课程目标数</div>
+    </div>
+    <div class="result-card">
+      <div class="value">${result.nAssess}</div>
+      <div class="label">考核方式数</div>
+    </div>
+  </div>`;
+
+  if (result.method === 'B') {
+    html += renderMethodBReport(result);
+  } else {
+    html += renderMethodAReport(result);
+  }
+
+  html += '<div class="chart-row">';
+  html += '<div class="chart-box"><h4>各目标达成度对比（柱状图）</h4><canvas id="chartBar_' + key.replace(/\s/g, '_') + '"></canvas></div>';
+  html += '<div class="chart-box"><h4>课程目标能力雷达图</h4><canvas id="chartRadar_' + key.replace(/\s/g, '_') + '"></canvas></div>';
+  html += '</div>';
+
+  if (result.method === 'A') {
+    html += '<div class="chart-row">';
+    html += '<div class="chart-box"><h4>各目标等级分布（堆叠柱状图）</h4><canvas id="chartStack_' + key.replace(/\s/g, '_') + '"></canvas></div>';
+    html += '<div class="chart-box"><h4>总达成度等级分布（饼图）</h4><canvas id="chartPie_' + key.replace(/\s/g, '_') + '"></canvas></div>';
+    html += '</div>';
+  }
+
+  html += `<div class="eval-box">
+    <h4>评价结论</h4>
+    <div class="grade ${gradeClass}">${result.className} 课程总达成度：${totalStr} — ${gradeLabel}</div>
+    <ul>`;
+  if (result.method === 'A') {
+    if (result.totalAchievement >= 85) html += '<li>课程目标全面达成，教学效果优秀，建议维持现有教学方案</li>';
+    else if (result.totalAchievement >= 70) {
+      html += '<li>课程目标基本达成，教学效果良好，可针对薄弱环节进行优化</li>';
+      const weakObj = result.finalAchievements.findIndex(r => r < 75);
+      if (weakObj >= 0) html += `<li>建议重点关注「${result.objectiveNames[weakObj]}」的教学改进</li>`;
+    } else if (result.totalAchievement >= 60) html += '<li>部分目标未完全达成，需调整教学内容或方法</li>';
+    else html += '<li>课程目标达成度较低，需全面反思课程设计和教学实施</li>';
+  } else {
+    if (result.totalAchievement >= 0.9) html += '<li>课程目标全面达成，教学效果优秀，建议维持现有教学方案</li>';
+    else if (result.totalAchievement >= 0.7) {
+      html += '<li>课程目标基本达成，教学效果良好，可针对薄弱环节进行优化</li>';
+      const weakIdx = result.objectiveAchievements.findIndex(r => r < 0.7);
+      if (weakIdx >= 0) html += `<li>建议重点关注「${result.objectiveNames[weakIdx]}」的教学改进</li>`;
+    } else if (result.totalAchievement >= 0.6) html += '<li>部分目标未完全达成，需调整教学内容或方法</li>';
+    else html += '<li>课程目标达成度较低，需全面反思课程设计和教学实施</li>';
+  }
+  html += '</ul></div>';
+
+  html += '<h3 style="margin:20px 0 12px">学生成绩明细</h3>';
+  html += '<div class="preview-table-wrap"><table class="report-table"><thead><tr><th>学号</th><th>姓名</th>';
+  result.objectiveNames.forEach(n => { html += `<th>${n}</th>`; });
+  html += '<th>综合达成度</th></tr></thead><tbody>';
+  result.students.forEach(s => {
+    html += `<tr><td>${s.id}</td><td>${s.name}</td>`;
+    s.objRates.forEach(r => {
+      html += `<td>${result.method === 'A' ? r.toFixed(2) + '%' : (r * 100).toFixed(2) + '%'}</td>`;
+    });
+    html += `<td style="font-weight:600">${result.method === 'A' ? (s.comprehensive || 0).toFixed(2) + '%' : '-'}</td></tr>`;
+  });
+  html += '</tbody></table></div>';
+
+  wrap.innerHTML = html;
+  setTimeout(() => renderCharts(result, key), 100);
+}
+
+function renderMethodBReport(result) {
+  let html = '';
+
+  html += '<h3 style="margin:20px 0 12px">各课程目标达成度报告</h3>';
+  html += '<table class="report-table"><thead><tr><th>课程目标</th>';
+  result.objectiveNames.forEach(n => { html += `<th>${n}</th>`; });
+  html += '<th style="background:#0d47a1">综合</th></tr></thead><tbody>';
+  html += '<tr><td style="font-weight:600">达成度</td>';
+  result.objectiveAchievements.forEach(r => {
+    const g = getGradeLabel(r * 100, 'B');
+    const c = getGradeClass(r * 100, 'B');
+    html += `<td><strong>${(r * 100).toFixed(2)}%</strong><br><span class="${c}" style="font-size:12px">${g}</span></td>`;
+  });
+  const gc = getGradeClass(result.totalAchievement * 100, 'B');
+  html += `<td style="font-weight:700;color:#1a73e8"><strong>${(result.totalAchievement * 100).toFixed(2)}%</strong><br><span class="${gc}" style="font-size:12px">${getGradeLabel(result.totalAchievement * 100, 'B')}</span></td></tr>`;
+  html += '</tbody></table>';
+
+  html += '<h3 style="margin:20px 0 12px">课程目标达成度计算明细</h3>';
+  html += '<p style="font-size:13px;color:#888;margin-bottom:8px">分目标达成度 = Σ（某项成绩分目标平均分 × 该项成绩比例） / 分目标总分</p>';
+  html += '<table class="report-table"><thead><tr><th></th>';
+  result.assessNames.forEach((n, i) => { html += `<th>${n} (${assessB[i].weight}%)</th>`; });
+  html += '<th style="background:#e8f0fe;color:#333">分目标总分</th><th style="background:#0d47a1">分目标达成度</th></tr></thead><tbody>';
+
+  html += '<tr style="background:#f5f7fa"><td style="font-weight:600">班级平均分</td>';
+  result.avgScores.forEach(s => { html += `<td><strong>${s.toFixed(2)}</strong></td>`; });
+  html += '<td colspan="2">—</td></tr>';
+
+  result.objectiveNames.forEach((name, oi) => {
+    html += `<tr><td style="font-weight:600">${name}</td>`;
+    result.objContributions[oi].forEach(c => {
+      html += `<td>${c.toFixed(4)}</td>`;
+    });
+    html += `<td class="highlight">${result.objTotalScores[oi].toFixed(1)}</td>`;
+    html += `<td style="font-weight:700;color:#1a73e8">${result.objectiveAchievements[oi].toFixed(4)}</td></tr>`;
+  });
+
+  const totalAvg = result.avgScores.reduce((a, b) => a + b, 0) / result.nAssess;
+  html += `<tr class="total-row"><td>课程总体达成度</td><td colspan="${result.nAssess}" style="text-align:right">期末考查平均分：${totalAvg.toFixed(4)}</td>`;
+  html += `<td colspan="2" style="font-weight:700;color:#1a73e8;font-size:16px">${(result.totalAchievement * 100).toFixed(4)}%</td></tr>`;
+  html += '</tbody></table>';
+
+  html += '<h3 style="margin:20px 0 12px">各目标分项贡献明细</h3>';
+  html += '<p style="font-size:13px;color:#888;margin-bottom:8px">展示每个课程目标在各考核环节上的具体得分贡献</p>';
+  result.objectiveNames.forEach((name, oi) => {
+    html += `<h4 style="margin:12px 0 8px;color:#1a73e8">${name} — 达成度 ${(result.objectiveAchievements[oi] * 100).toFixed(2)}%</h4>`;
+    html += '<table class="detail-table"><tr><th>考核环节</th><th>权重</th><th>支撑比例</th><th>班级平均分</th><th>贡献值</th></tr>';
+    result.assessNames.forEach((aName, si) => {
+      const support = weightMatrixB[`${oi}_${si}`] || 0;
+      const weight = assessB[si].weight;
+      const avg = result.avgScores[si];
+      const contrib = result.objContributions[oi][si];
+      html += `<tr><td>${aName}</td><td>${weight}%</td><td>${support}%</td><td>${avg.toFixed(2)}</td><td>${contrib.toFixed(4)}</td></tr>`;
+    });
+    html += `<tr class="highlight"><td colspan="4" style="text-align:right;font-weight:600">分目标总分</td><td style="font-weight:700">${result.objTotalScores[oi].toFixed(1)}</td></tr>`;
+    html += `<tr class="highlight"><td colspan="4" style="text-align:right;font-weight:600">达成度</td><td style="font-weight:700;color:#1a73e8">${result.objectiveAchievements[oi].toFixed(4)}</td></tr>`;
+    html += '</table>';
+  });
+
+  return html;
+}
+
+function renderMethodAReport(result) {
+  let html = '';
+  html += '<h3 style="margin:20px 0 12px">各课程目标达成度报告</h3>';
+  html += '<table class="report-table"><thead><tr><th>课程目标</th>';
+  result.objectiveNames.forEach(n => { html += `<th>${n}</th>`; });
+  html += '<th style="background:#0d47a1">综合</th></tr></thead><tbody>';
+  html += '<tr><td style="font-weight:600">平均得分率</td>';
+  result.avgObjRates.forEach(r => { html += `<td>${r.toFixed(2)}%</td>`; });
+  html += '<td>-</td></tr>';
+  html += '<tr><td style="font-weight:600">最终达成度</td>';
+  result.finalAchievements.forEach(r => { html += `<td>${r.toFixed(2)}%</td>`; });
+  html += `<td style="font-weight:700;color:#1a73e8">${result.totalAchievement.toFixed(2)}%</td></tr>`;
+  html += '<tr><td style="font-weight:600">评价</td>';
+  result.finalAchievements.forEach(r => {
+    const g = getGradeLabel(r, 'A');
+    const c = getGradeClass(r, 'A');
+    html += `<td class="${c}" style="font-weight:600">${g}</td>`;
+  });
+  const gc = getGradeClass(result.totalAchievement, 'A');
+  html += `<td class="${gc}" style="font-weight:700">${getGradeLabel(result.totalAchievement, 'A')}</td></tr>`;
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderCharts(result, key) {
+  const safeKey = key.replace(/\s/g, '_');
+  Object.keys(charts).forEach(k => {
+    if (k.startsWith(safeKey)) { charts[k].destroy(); delete charts[k]; }
+  });
+
+  const colors = ['#1a73e8', '#34a853', '#fbbc04', '#ea4335', '#9c27b0', '#00bcd4'];
+  const barData = result.method === 'A' ? result.finalAchievements : result.objectiveAchievements.map(r => r * 100);
+
+  charts[safeKey + '_bar'] = new Chart(document.getElementById('chartBar_' + safeKey), {
+    type: 'bar',
+    data: {
+      labels: result.objectiveNames,
+      datasets: [{ label: '达成度(%)', data: barData, backgroundColor: colors.slice(0, result.nObj), borderRadius: 6 }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: '达成度(%)' } } }
+    }
+  });
+
+  charts[safeKey + '_radar'] = new Chart(document.getElementById('chartRadar_' + safeKey), {
+    type: 'radar',
+    data: {
+      labels: result.objectiveNames,
+      datasets: [{ label: '达成度', data: barData, backgroundColor: 'rgba(26,115,232,0.2)', borderColor: '#1a73e8', pointBackgroundColor: '#1a73e8' }]
+    },
+    options: { responsive: true, scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } } } }
+  });
+
+  if (result.method === 'A') {
+    charts[safeKey + '_stack'] = new Chart(document.getElementById('chartStack_' + safeKey), {
+      type: 'bar',
+      data: {
+        labels: result.objectiveNames,
+        datasets: [
+          { label: '优秀', data: result.gradeDistributions.map(d => d.excellentRate), backgroundColor: '#2e7d32' },
+          { label: '良好', data: result.gradeDistributions.map(d => d.goodRate), backgroundColor: '#1a73e8' },
+          { label: '中等', data: result.gradeDistributions.map(d => d.mediumRate), backgroundColor: '#f9a825' },
+          { label: '及格', data: result.gradeDistributions.map(d => d.passRate), backgroundColor: '#e65100' },
+          { label: '不及格', data: result.gradeDistributions.map(d => d.failRate), backgroundColor: '#c62828' }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        scales: { x: { stacked: true }, y: { stacked: true, max: 100, title: { display: true, text: '占比(%)' } } }
+      }
+    });
+
+    const totalDist = { excellent: 0, good: 0, medium: 0, pass: 0, fail: 0 };
+    result.gradeDistributions.forEach(d => {
+      totalDist.excellent += d.excellent;
+      totalDist.good += d.good;
+      totalDist.medium += d.medium;
+      totalDist.pass += d.pass;
+      totalDist.fail += d.fail;
+    });
+    charts[safeKey + '_pie'] = new Chart(document.getElementById('chartPie_' + safeKey), {
+      type: 'doughnut',
+      data: {
+        labels: ['优秀', '良好', '中等', '及格', '不及格'],
+        datasets: [{ data: [totalDist.excellent, totalDist.good, totalDist.medium, totalDist.pass, totalDist.fail], backgroundColor: ['#2e7d32', '#1a73e8', '#f9a825', '#e65100', '#c62828'] }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+function getGradeLabel(value, m) {
+  const v = m === 'B' && value <= 1 ? value * 100 : value;
+  if (v >= 85) return '优秀';
+  if (v >= 70) return '良好';
+  if (v >= 60) return '中等';
+  if (v >= 55) return '及格';
+  return '不及格';
+}
+
+function getGradeClass(value, m) {
+  const label = getGradeLabel(value, m);
+  if (label === '优秀') return 'excellent';
+  if (label === '良好') return 'good';
+  if (label === '中等') return 'medium';
+  return 'fail';
+}
+
+function exportReport() {
+  Object.values(charts).forEach(c => { try { c.update(); } catch(e) {} });
+  const contentEl = document.getElementById('reportContent');
+  const canvases = contentEl.querySelectorAll('canvas');
+  const imageData = [];
+  canvases.forEach(c => {
+    try { imageData.push({ id: c.id, data: c.toDataURL('image/png') }); } catch(e) { imageData.push({ id: c.id, data: '' }); }
+  });
+  imageData.forEach(item => {
+    if (!item.data) return;
+    const canvas = document.getElementById(item.id);
+    if (!canvas) return;
+    const img = document.createElement('img');
+    img.src = item.data;
+    img.style.maxWidth = '100%';
+    img.style.height = 'auto';
+    canvas.parentNode.replaceChild(img, canvas);
+  });
+  const content = contentEl.innerHTML;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>课程达成度分析报告</title>
+  <style>body{font-family:'Microsoft YaHei',sans-serif;padding:40px;max-width:1100px;margin:0 auto;line-height:1.6}
+  table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#1a73e8;color:#fff;padding:10px;text-align:center}
+  td{padding:8px 10px;border:1px solid #ddd;text-align:center}.result-summary{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0}
+  .result-card{flex:1;min-width:150px;text-align:center;padding:20px;border-radius:10px;background:#f5f7fa;border-top:4px solid #1a73e8}
+  .result-card .value{font-size:32px;font-weight:700;color:#1a73e8}.result-card .label{font-size:13px;color:#666}
+  .excellent{border-top-color:#2e7d32!important}.excellent .value{color:#2e7d32!important}
+  .good{border-top-color:#1a73e8!important}.good .value{color:#1a73e8!important}
+  .medium{border-top-color:#f9a825!important}.medium .value{color:#f9a825!important}
+  .fail{border-top-color:#c62828!important}.fail .value{color:#c62828!important}
+  .eval-box{background:#f5f7fa;padding:20px;border-radius:10px;border-left:4px solid #1a73e8;margin:16px 0}
+  .chart-row{display:flex;gap:20px;flex-wrap:wrap}.chart-box{flex:1;min-width:300px;text-align:center}
+  .detail-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+  .detail-table th{background:#f5f7fa;padding:8px 10px;text-align:center;font-weight:600;border:1px solid #ddd}
+  .detail-table td{padding:6px 10px;text-align:center;border:1px solid #eee}
+  .highlight{background:#e8f0fe;font-weight:600}
+  .total-row{background:#e8f0fe;font-weight:700}
+  h1{text-align:center;color:#1a73e8}</style></head><body>
+  <h1>课程达成度分析报告</h1>${content}</body></html>`;
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '课程达成度分析报告.html';
+  a.click();
+  renderReport();
+}
+
+function exportMarkdown() {
+  const keys = Object.keys(allResults);
+  let md = '# 课程达成度分析报告\n\n';
+  md += `**生成时间**：${new Date().toLocaleString()}\n\n`;
+  md += `**计算方法**：${method === 'A' ? '等级加权法' : '权重分配法'}\n\n`;
+
+  keys.forEach(key => {
+    const r = allResults[key];
+    md += `## ${r.className}\n\n`;
+    md += `**学生人数**：${r.studentCount}\n\n`;
+    md += `**课程总达成度**：${(r.totalAchievement * 100).toFixed(2)}% — ${getGradeLabel(r.totalAchievement * 100, 'B')}\n\n`;
+
+    md += '### 各课程目标达成度\n\n';
+    md += '| 课程目标 | 达成度 | 评价 |\n|---|---|---|\n';
+    r.objectiveNames.forEach((name, i) => {
+      const v = r.method === 'A' ? r.finalAchievements[i] : r.objectiveAchievements[i] * 100;
+      md += `| ${name} | ${v.toFixed(2)}% | ${getGradeLabel(v, 'B')} |\n`;
+    });
+    md += `| **综合** | **${(r.totalAchievement * 100).toFixed(2)}%** | **${getGradeLabel(r.totalAchievement * 100, 'B')}** |\n\n`;
+
+    if (r.method === 'B') {
+      md += '### 达成度计算明细\n\n';
+      md += '| | ' + r.assessNames.join(' | ') + ' | 分目标总分 | 达成度 |\n';
+      md += '|---' + '|---'.repeat(r.nAssess) + '|---|---|\n';
+      md += '| 班级平均分 | ' + r.avgScores.map(s => s.toFixed(2)).join(' | ') + ' | — | — |\n';
+      r.objectiveNames.forEach((name, oi) => {
+        md += `| ${name} | ${r.objContributions[oi].map(c => c.toFixed(4)).join(' | ')} | ${r.objTotalScores[oi].toFixed(1)} | ${r.objectiveAchievements[oi].toFixed(4)} |\n`;
+      });
+      md += '\n';
+    }
+  });
+
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '课程达成度分析报告.md';
+  a.click();
+}
+</script>
+</body>
+</html>
