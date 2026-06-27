@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEE 土地利用数据集下载工具</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; }
+
+        .header {
+            background: linear-gradient(135deg, #1a5276, #2e86c1);
+            color: white; padding: 14px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .header h1 { font-size: 18px; font-weight: 600; }
+        .header .subtitle { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+
+        .main { display: flex; height: calc(100vh - 56px); }
+
+        .sidebar {
+            width: 400px; min-width: 400px; background: white;
+            overflow-y: auto; border-right: 1px solid #e0e0e0;
+        }
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+        .panel { border-bottom: 1px solid #e8e8e8; }
+        .panel-header {
+            padding: 10px 16px; font-size: 13px; font-weight: 600;
+            background: #fafafa; cursor: pointer; display: flex;
+            align-items: center; justify-content: space-between;
+            user-select: none;
+        }
+        .panel-header:hover { background: #f0f5ff; }
+        .panel-header .arrow { transition: transform 0.2s; font-size: 10px; }
+        .panel-header.collapsed .arrow { transform: rotate(-90deg); }
+        .panel-body { padding: 10px 16px; }
+        .panel-body.collapsed-body { display: none; }
+
+        /* 数据集下拉 + 卡片 */
+        .ds-selector { position: relative; }
+        .ds-dropdown {
+            width: 100%; padding: 9px 12px; border: 1px solid #d9d9d9;
+            border-radius: 6px; font-size: 13px; outline: none;
+            background: white; cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 10px center;
+        }
+        .ds-dropdown:focus { border-color: #2e86c1; }
+
+        .ds-detail-card {
+            margin-top: 10px; border: 1px solid #e0e0e0; border-radius: 8px;
+            overflow: hidden; transition: all 0.2s;
+        }
+        .ds-detail-card.active { border-color: #2e86c1; box-shadow: 0 0 0 2px rgba(46,134,193,0.15); }
+        .ds-detail-header {
+            padding: 12px 14px; background: #f8fafc; display: flex;
+            align-items: flex-start; justify-content: space-between;
+        }
+        .ds-detail-header .ds-name { font-size: 15px; font-weight: 700; color: #1a5276; }
+        .ds-detail-header .ds-range-badge {
+            font-size: 10px; padding: 2px 8px; border-radius: 10px;
+            font-weight: 500; white-space: nowrap; margin-left: 8px;
+        }
+        .badge-global { background: #e6f7ff; color: #1890ff; }
+        .badge-china { background: #fff7e6; color: #fa8c16; }
+        .badge-usa { background: #f0f5ff; color: #2f54eb; }
+        .badge-europe { background: #f9f0ff; color: #722ed1; }
+
+        .ds-detail-body { padding: 10px 14px; font-size: 12px; line-height: 1.7; }
+        .ds-detail-body .info-row { display: flex; gap: 4px; margin-bottom: 3px; }
+        .ds-detail-body .info-label { color: #888; min-width: 70px; flex-shrink: 0; }
+        .ds-detail-body .info-value { color: #333; }
+        .ds-detail-body .ds-desc { color: #555; margin-top: 6px; }
+        .ds-detail-links {
+            padding: 8px 14px; background: #f8fafc; border-top: 1px solid #eee;
+            display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .ds-detail-links a {
+            font-size: 11px; color: #2e86c1; text-decoration: none;
+            padding: 3px 8px; border: 1px solid #d6e4f0; border-radius: 4px;
+            background: #eef5fb; transition: all 0.2s;
+        }
+        .ds-detail-links a:hover { background: #2e86c1; color: white; }
+
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 3px; color: #555; }
+        .form-group select, .form-group input {
+            width: 100%; padding: 7px 10px; border: 1px solid #d9d9d9;
+            border-radius: 6px; font-size: 12px; outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group select:focus, .form-group input:focus { border-color: #2e86c1; }
+
+        .roi-buttons { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+        .roi-btn {
+            padding: 5px 10px; border: 1px solid #d9d9d9; border-radius: 5px;
+            background: white; cursor: pointer; font-size: 11px; transition: all 0.2s;
+        }
+        .roi-btn:hover { border-color: #2e86c1; color: #2e86c1; }
+        .roi-btn.active { background: #2e86c1; color: white; border-color: #2e86c1; }
+
+        .btn-primary {
+            width: 100%; padding: 9px; background: #2e86c1; color: white;
+            border: none; border-radius: 6px; font-size: 13px; font-weight: 500;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-primary:hover { background: #1a6da3; }
+        .btn-primary:disabled { background: #b0b0b0; cursor: not-allowed; }
+
+        .btn-secondary {
+            width: 100%; padding: 7px; background: white; color: #2e86c1;
+            border: 1px solid #2e86c1; border-radius: 6px; font-size: 12px;
+            cursor: pointer; transition: all 0.2s; margin-top: 5px;
+        }
+        .btn-secondary:hover { background: #f0f7ff; }
+
+        .map-container { flex: 1; position: relative; }
+        #map { width: 100%; height: 100%; }
+
+        .map-overlay {
+            position: absolute; bottom: 40px; right: 10px; z-index: 1000;
+            background: white; border-radius: 8px; padding: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15); max-width: 260px;
+            max-height: 50vh; overflow-y: auto;
+        }
+        .map-overlay h3 { font-size: 12px; margin-bottom: 6px; font-weight: 600; }
+        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; margin-bottom: 2px; }
+        .legend-color { width: 12px; height: 12px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
+
+        .code-panel {
+            background: #1e1e1e; color: #d4d4d4; padding: 10px;
+            border-radius: 6px; font-family: 'Consolas', monospace;
+            font-size: 11px; line-height: 1.45; max-height: 280px;
+            overflow: auto; white-space: pre-wrap; word-break: break-all;
+        }
+
+        .status-bar {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; background: rgba(0,0,0,0.75); color: white;
+            padding: 6px 14px; border-radius: 20px; font-size: 11px;
+            display: none;
+        }
+        .status-bar.show { display: block; }
+
+        .toast {
+            position: fixed; top: 16px; right: 16px; z-index: 3000;
+            background: #52c41a; color: white; padding: 10px 18px;
+            border-radius: 8px; font-size: 12px; display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .toast.show { display: block; animation: slideIn 0.3s ease; }
+        .toast.error { background: #ff4d4f; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .modal-mask {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4); z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: white; border-radius: 10px; padding: 24px;
+            width: 400px; max-width: 90vw; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #1a5276; }
+
+        .checkbox-label { display: flex; align-items: center; gap: 5px; font-size: 12px; cursor: pointer; }
+        .checkbox-label input { accent-color: #2e86c1; }
+
+        .ds-count-badge {
+            display: inline-block; background: #2e86c1; color: white;
+            font-size: 10px; padding: 1px 6px; border-radius: 8px;
+            margin-left: 4px; font-weight: 400;
+        }
+
+        @media (max-width: 768px) {
+            .main { flex-direction: column; }
+            .sidebar { width: 100%; min-width: auto; max-height: 50vh; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>GEE 土地利用/覆盖数据集下载工具</h1>
+            <div class="subtitle">基于 Google Earth Engine 的多源 LULC 数据一键下载</div>
+        </div>
+        <div style="text-align:right;">
+            <div style="font-size:10px;color:rgba(255,255,255,0.7);margin-top:4px;">© 嘉应学院 钟广锐 github.com/mzatun</div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="sidebar">
+            <!-- 数据集选择 -->
+            <div class="panel">
+                <div class="panel-header" onclick="togglePanel(this)">
+                    <span>📦 选择数据集 <span class="ds-count-badge" id="dsCount">0</span></span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="panel-body">
+                    <div class="ds-selector">
+                        <select class="ds-dropdown" id="dsDropdown" onchange="onDatasetChange(this.value)">
+                            <option value="">-- 请选择数据集 --</option>
+                        </select>
+                    </div>
+                    <div id="dsDetailContainer"></div>
+                </div>
+            </div>
+
+            <!-- 研究区域 -->
+            <div class="panel">
+                <div class="panel-header" onclick="togglePanel(this)">
+                    <span>🗺️ 研究区域</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="panel-body">
+                    <div class="roi-buttons">
+                        <button class="roi-btn active" onclick="setROI('draw', this)">手动绘制</button>
+                        <button class="roi-btn" onclick="setROI('province', this)">省级</button>
+                        <button class="roi-btn" onclick="setROI('city', this)">市级</button>
+                        <button class="roi-btn" onclick="setROI('county', this)">县区级</button>
+                        <button class="roi-btn" onclick="setROI('country', this)">国家级</button>
+                        <button class="roi-btn" onclick="setROI('global', this)">全球</button>
+                    </div>
+                    <div id="roiProvinceWrap" style="display:none;">
+                        <div class="form-group">
+                            <label>选择省份</label>
+                            <select id="provinceSelect" onchange="onProvinceChange()"></select>
+                        </div>
+                    </div>
+                    <div id="roiCityWrap" style="display:none;">
+                        <div class="form-group">
+                            <label>选择省份</label>
+                            <select id="cityProvinceSelect" onchange="onCityProvinceChange()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>选择城市</label>
+                            <select id="citySelect" onchange="onCityChange()"></select>
+                        </div>
+                    </div>
+                    <div id="roiCountyWrap" style="display:none;">
+                        <div class="form-group">
+                            <label>选择省份</label>
+                            <select id="countyProvinceSelect" onchange="onCountyProvinceChange()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>选择城市</label>
+                            <select id="countyCitySelect" onchange="onCountyCityChange()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>选择县区</label>
+                            <select id="countySelect" onchange="onCountyChange()"></select>
+                        </div>
+                    </div>
+                    <div id="roiCountryWrap" style="display:none;">
+                        <div class="form-group">
+                            <label>选择国家</label>
+                            <select id="countrySelect">
+                                <option value="China">中国</option>
+                                <option value="United States">美国</option>
+                                <option value="India">印度</option>
+                                <option value="Brazil">巴西</option>
+                                <option value="Russia">俄罗斯</option>
+                                <option value="Australia">澳大利亚</option>
+                                <option value="Japan">日本</option>
+                                <option value="Germany">德国</option>
+                                <option value="United Kingdom">英国</option>
+                                <option value="France">法国</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="roiDrawHint" style="font-size:11px; color:#999;">
+                        在地图上按住鼠标拖拽绘制矩形区域
+                    </div>
+                </div>
+            </div>
+
+            <!-- 时间范围 -->
+            <div class="panel">
+                <div class="panel-header" onclick="togglePanel(this)">
+                    <span>📅 时间范围</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>起始年份</label>
+                        <select id="startYear"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>结束年份</label>
+                        <select id="endYear"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="annualExport" checked>
+                            逐年导出
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 输出设置 -->
+            <div class="panel">
+                <div class="panel-header" onclick="togglePanel(this)">
+                    <span>⚙️ 输出设置</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>输出分辨率（米）</label>
+                        <select id="outputScale">
+                            <option value="10">10m</option>
+                            <option value="30" selected>30m</option>
+                            <option value="100">100m</option>
+                            <option value="500">500m</option>
+                            <option value="1000">1000m</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>坐标系</label>
+                        <select id="outputCRS">
+                            <option value="EPSG:4326">WGS84 (EPSG:4326)</option>
+                            <option value="EPSG:3857">Web Mercator (EPSG:3857)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Google Drive 文件夹名</label>
+                        <input type="text" id="driveFolder" value="GEE_LandUse">
+                    </div>
+                    <div style="border-top:1px solid #eee; padding-top:8px; margin-top:4px;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableDEM" onchange="onDEMChange()">
+                            同时下载 DEM 地形数据
+                        </label>
+                    </div>
+                    <div id="demOptions" style="display:none; margin-top:8px;">
+                        <div class="form-group">
+                            <label>DEM 数据集</label>
+                            <select id="demDataset">
+                                <option value="srtm30">SRTM 30m（推荐）</option>
+                                <option value="srtm90">SRTM 90m</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>DEM 输出分辨率（米）</label>
+                            <select id="demScale">
+                                <option value="10">10m</option>
+                                <option value="30" selected>30m</option>
+                                <option value="90">90m</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 代码预览 -->
+            <div class="panel">
+                <div class="panel-header" onclick="togglePanel(this)">
+                    <span>📝 GEE 代码预览</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="panel-body">
+                    <div class="code-panel" id="codePreview">// 选择数据集后自动生成 GEE 代码...</div>
+                    <button class="btn-secondary" onclick="copyCode()">📋 复制代码</button>
+                </div>
+            </div>
+
+            <!-- 导出 -->
+            <div class="panel">
+                <div class="panel-body">
+                    <button class="btn-primary" id="exportBtn" onclick="startExport()" disabled>
+                        📤 复制代码并查看操作指引
+                    </button>
+                    <div style="font-size:10px; color:#aaa; margin-top:4px; text-align:center;">
+                        代码已复制，按指引在 GEE Code Editor 中粘贴运行
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="map-overlay" id="legendPanel" style="display:none;">
+                <h3 id="legendTitle">图例</h3>
+                <div id="legendContent"></div>
+            </div>
+            <div class="status-bar" id="statusBar"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="modal-mask" id="loginReminder" style="display:none;" onclick="closeGuideModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-title">📋 操作指引</div>
+            <div style="font-size:13px;line-height:2;color:#333;">
+                <p><b>代码已复制到剪贴板</b>，请按以下步骤操作：</p>
+                <ol style="padding-left:20px;margin:8px 0;">
+                    <li>打开 <a href="https://code.earthengine.google.com/" target="_blank"><b>GEE Code Editor</b></a>（需科学上网）</li>
+                    <li>点击编辑器区域，<b>粘贴</b>刚才复制的代码（Ctrl+V / Cmd+V）</li>
+                    <li>点击编辑器上方 <b>Run</b> 按钮运行脚本</li>
+                    <li>切换到右侧面板 <b>Tasks</b> 选项卡</li>
+                    <li>点击任务旁的 <b>Run</b> 按钮启动导出</li>
+                    <li>导出完成后，文件保存在 Google Drive 对应文件夹中</li>
+                </ol>
+                <p style="color:#888;font-size:11px;">⚠️ 需要有效的 Google 账号和 GEE 权限。</p>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+                <button class="btn-primary" style="width:auto;" onclick="closeGuideModal()">我知道了</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    // ==================== 数据集定义 ====================
+    const DATASETS = [
+        // ---- 全球高分辨率（公开可用） ----
+        {
+            id: 'dynamic_world',
+            name: 'Dynamic World V1',
+            fullName: 'Google 动态世界近实时土地覆盖',
+            source: 'Google',
+            resolution: 10,
+            range: '全球', rangeType: 'global',
+            years: { start: 2015, end: 2024 },
+            description: '基于Sentinel-2的10m近实时LULC，9个类别含概率图，分辨率全球最高，适合高频变化监测。',
+            collection: 'GOOGLE/DYNAMICWORLD/V1',
+            band: 'label',
+            filterType: 'dateRange',
+            classes: { 0:{name:'水体',color:'#419BDF'}, 1:{name:'草地',color:'#88B053'}, 2:{name:'灌木',color:'#7A8737'}, 3:{name:'林地',color:'#2C7532'}, 4:{name:'耕地',color:'#C6EC00'}, 5:{name:'建设用地',color:'#E1517B'}, 6:{name:'裸地',color:'#A58C30'}, 7:{name:'雪冰',color:'#515151'}, 8:{name:'云',color:'#F0F0F0'} },
+            links: [
+                { label: '官方文档', url: 'https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1' },
+                { label: '论文 (Pekel et al.)', url: 'https://doi.org/10.1038/s41586-016-0122-1' }
+            ]
+        },
+        {
+            id: 'esa_worldcover',
+            name: 'ESA WorldCover',
+            fullName: 'ESA 10m 全球土地覆盖',
+            source: 'ESA / VITO',
+            resolution: 10,
+            range: '全球', rangeType: 'global',
+            years: { start: 2020, end: 2021 },
+            description: '基于Sentinel-1 SAR+Sentinel-2光学融合的10m全球土地覆盖，11类，精度76.7%。CC-BY-4.0开源。',
+            collection: 'ESA/WorldCover/v200',
+            band: 'Map',
+            filterType: 'fixed',
+            classes: { 10:{name:'树木',color:'#006400'}, 20:{name:'灌木',color:'#ffbb22'}, 30:{name:'草地',color:'#ffff4c'}, 40:{name:'耕地',color:'#f096ff'}, 50:{name:'建设用地',color:'#fa0000'}, 60:{name:'裸地/稀疏植被',color:'#b4b4b4'}, 70:{name:'雪冰',color:'#f0f0f0'}, 80:{name:'永久水体',color:'#0064c8'}, 95:{name:'湿地',color:'#0096a0'}, 100:{name:'红树林',color:'#00cf75'}, 110:{name:'苔藓地衣',color:'#fae6a0'} },
+            links: [
+                { label: '官方主页', url: 'https://esa-worldcover.org/' },
+                { label: 'Zenodo DOI', url: 'https://doi.org/10.5281/zenodo.7254221' },
+                { label: 'GEE文档', url: 'https://developers.google.com/earth-engine/datasets/catalog/ESA_WorldCover_v200' }
+            ]
+        },
+        // ---- 全球 30m ----
+        {
+            id: 'glad_lc',
+            name: 'GLAD Land Cover',
+            fullName: '马里兰大学 30m 全球土地覆盖',
+            source: 'UMD GLAD Lab (Potapov等)',
+            resolution: 30,
+            range: '全球', rangeType: 'global',
+            years: { start: 2000, end: 2020 },
+            description: '马里兰大学GLAD实验室发布的30m全球土地覆盖，三期(2000/2010/2020)，擅长热带森林砍伐监测。',
+            collection: 'UMD/GladLandCover/LandCover20',
+            band: 'landcover',
+            filterType: 'fixed',
+            classes: { 0:{name:'水体',color:'#419BDF'}, 1:{name:'林地-常绿阔叶',color:'#006400'}, 2:{name:'林地-落叶阔叶',color:'#00a800'}, 3:{name:'林地-常绿针叶',color:'#007800'}, 4:{name:'林地-落叶针叶',color:'#009600'}, 5:{name:'灌木',color:'#96ff50'}, 6:{name:'草地',color:'#c8ff00'}, 7:{name:'耕地',color:'#ffff00'}, 8:{name:'建设用地',color:'#ff0000'}, 9:{name:'裸地',color:'#d2b48c'}, 10:{name:'冰雪',color:'#e0e0e0'} },
+            links: [
+                { label: '论文 (Potapov 2022)', url: 'https://doi.org/10.1038/s41597-022-01423-4' },
+                { label: 'GEE数据目录', url: 'https://developers.google.com/earth-engine/datasets/catalog/UMD_GladLandCover' }
+            ]
+        },
+        // ---- 中国区域 ----
+        {
+            id: 'clcd',
+            name: 'CLCD',
+            fullName: '中国土地利用/覆盖数据集',
+            source: '武汉大学 (杨杰等)',
+            resolution: 30,
+            range: '中国', rangeType: 'china',
+            years: { start: 1985, end: 2022 },
+            description: '武汉大学发布的中国区域30m土地利用，1985-2022年逐年连续覆盖。需先在GEE中搜索 CLCD 并申请访问权限。',
+            collection: 'projects/sat-io/open-datasets/CLCD/CLCD',
+            band: 'landcover',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 1:{name:'耕地',color:'#ffff00'}, 2:{name:'林地',color:'#006400'}, 3:{name:'草地',color:'#c8ff00'}, 4:{name:'灌木',color:'#96ff50'}, 5:{name:'湿地',color:'#00ffff'}, 6:{name:'水体',color:'#0040c0'}, 7:{name:'建设用地',color:'#ff0000'}, 8:{name:'冰雪',color:'#e0e0e0'}, 9:{name:'裸地',color:'#d2b48c'} },
+            links: [
+                { label: '论文 (Yang 2021)', url: 'https://doi.org/10.1016/j.rse.2021.112660' },
+                { label: 'GEE数据目录', url: 'https://samcrowley.github.io/CLCD/' }
+            ]
+        },
+        {
+            id: 'glc_fcs30d',
+            name: 'GLC_FCS30D',
+            fullName: '全球30m精细分类地表覆盖动态监测',
+            source: '中科院空天院 (ESSD 2024)',
+            resolution: 30,
+            range: '全球', rangeType: 'global',
+            years: { start: 1985, end: 2022 },
+            description: '1985-2022年全球30m精细分类，10大类35子类。需先在GEE中搜索 GLC_FCS30D 并申请访问权限。',
+            collection: 'projects/sat-io/open-datasets/GLC-FCS30D/annual',
+            band: 'landcover',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 10:{name:'水田',color:'#ffff00'}, 11:{name:'旱地',color:'#cce800'}, 20:{name:'常绿阔叶林',color:'#006400'}, 21:{name:'落叶阔叶林',color:'#00a800'}, 22:{name:'常绿针叶林',color:'#007800'}, 23:{name:'落叶针叶林',color:'#009600'}, 30:{name:'灌木',color:'#96ff50'}, 40:{name:'草地',color:'#c8ff00'}, 50:{name:'湿地',color:'#00ffff'}, 60:{name:'水体',color:'#0040c0'}, 70:{name:'冰雪',color:'#e0e0e0'}, 80:{name:'建设用地',color:'#ff0000'}, 90:{name:'裸地',color:'#d2b48c'}, 100:{name:'未利用地',color:'#f5deb3'} },
+            links: [
+                { label: '论文 (ESSD)', url: 'https://doi.org/10.5194/essd-16-1353-2024' },
+                { label: 'GEE数据目录', url: 'https://developers.google.com/earth-engine/datasets/catalog/projects_sat-io_open-datasets_GLC-FCS30D' }
+            ]
+        },
+        {
+            id: 'fromglc10',
+            name: 'FROM-GLC10',
+            fullName: '清华大学 10m 全球土地覆盖',
+            source: '清华大学 (Gong等)',
+            resolution: 10,
+            range: '全球', rangeType: 'global',
+            years: { start: 2017, end: 2020 },
+            description: '清华大学发布的10m全球土地覆盖。需先在GEE中搜索 FROM-GLC10 并申请访问权限。',
+            collection: 'Tsinghua/FROM-GLC/GAOWNER/V0002',
+            band: 'landcover',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 10:{name:'耕地',color:'#ffff00'}, 20:{name:'林地',color:'#006400'}, 30:{name:'灌木',color:'#96ff50'}, 40:{name:'草地',color:'#c8ff00'}, 50:{name:'水体',color:'#0040c0'}, 60:{name:'雪冰',color:'#e0e0e0'}, 70:{name:'裸地',color:'#d2b48c'}, 80:{name:'建设用地',color:'#ff0000'}, 90:{name:'湿地',color:'#00ffff'} },
+            links: [
+                { label: '论文 (Gong 2019)', url: 'https://doi.org/10.1126/sciadv.aax0408' },
+                { label: '清华大学实验室', url: 'http://data.ess.tsinghua.edu.cn/' }
+            ]
+        },
+        {
+            id: 'fromglc30',
+            name: 'FROM-GLC30',
+            fullName: '清华大学 30m 全球土地覆盖',
+            source: '清华大学 / UMD / Google',
+            resolution: 30,
+            range: '全球', rangeType: 'global',
+            years: { start: 2010, end: 2017 },
+            description: '清华大学30m全球土地覆盖。需先在GEE中搜索 FROM-GLC30 并申请访问权限。',
+            collection: 'Tsinghua/FROM-GLC/GLOBAL0100/V0002',
+            band: 'landcover',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 10:{name:'耕地',color:'#ffff00'}, 20:{name:'林地',color:'#006400'}, 30:{name:'灌木',color:'#96ff50'}, 40:{name:'草地',color:'#c8ff00'}, 50:{name:'水体',color:'#0040c0'}, 60:{name:'雪冰',color:'#e0e0e0'}, 70:{name:'裸地',color:'#d2b48c'}, 80:{name:'建设用地',color:'#ff0000'}, 90:{name:'湿地',color:'#00ffff'} },
+            links: [
+                { label: '论文 (Gong 2013)', url: 'https://doi.org/10.1080/01431161.2012.748992' },
+                { label: '清华大学实验室', url: 'http://data.ess.tsinghua.edu.cn/' }
+            ]
+        },
+        {
+            id: 'globe_land30',
+            name: 'GlobeLand30',
+            fullName: '全球30m地表覆盖数据',
+            source: '国家基础地理信息中心 (NGCC)',
+            resolution: 30,
+            range: '全球', rangeType: 'global',
+            years: { start: 2000, end: 2020 },
+            description: '中国主导的首个30m全球地表覆盖产品。需先在GEE中搜索 GlobeLand30 并申请访问权限。',
+            collection: 'NGCC/GlobeLand30/V030',
+            band: 'landcover',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 10:{name:'耕地',color:'#ffff00'}, 20:{name:'林地',color:'#006400'}, 30:{name:'草地',color:'#c8ff00'}, 40:{name:'灌木',color:'#96ff50'}, 50:{name:'湿地',color:'#00ffff'}, 60:{name:'水体',color:'#0040c0'}, 70:{name:'苔原',color:'#f0f0f0'}, 80:{name:'建设用地',color:'#ff0000'}, 90:{name:'裸地',color:'#d2b48c'}, 100:{name:'冰雪',color:'#e0e0e0'} },
+            links: [
+                { label: '论文 (Chen 2015)', url: 'https://doi.org/10.1080/15481603.2014.964446' },
+                { label: '官方数据平台', url: 'http://www.globallandcover.com/' }
+            ]
+        },
+        {
+            id: 'cas_landuse',
+            name: '中科院土地利用',
+            fullName: '中国科学院土地利用遥感监测数据',
+            source: '中国科学院 (刘纪远等)',
+            resolution: 30,
+            range: '中国', rangeType: 'china',
+            years: { start: 1980, end: 2020 },
+            description: '经典中国土地利用数据集，以5年为期，6大类25子类。需先在GEE中搜索 CAS-LU 并申请访问权限。',
+            collection: 'projects/sat-io/open-datasets/CAS-LU',
+            band: 'landcover',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 11:{name:'水田',color:'#FFFF00'}, 12:{name:'旱地',color:'#CECE00'}, 21:{name:'有林地',color:'#006400'}, 22:{name:'灌木林',color:'#00A800'}, 23:{name:'疏林地',color:'#00AA00'}, 24:{name:'其他林地',color:'#00CC00'}, 31:{name:'高覆盖草地',color:'#C8FF00'}, 32:{name:'中覆盖草地',color:'#A8FF4E'}, 33:{name:'低覆盖草地',color:'#8CFF00'}, 41:{name:'河渠',color:'#0040C0'}, 42:{name:'湖泊',color:'#0060C0'}, 43:{name:'水库',color:'#0080C0'}, 46:{name:'滩涂',color:'#00C0FF'}, 51:{name:'城镇用地',color:'#FF0000'}, 52:{name:'农村居民点',color:'#CC0000'}, 53:{name:'工矿交通',color:'#FF5050'}, 61:{name:'沙地',color:'#D2B48C'}, 62:{name:'戈壁',color:'#C8C8A0'}, 63:{name:'盐碱地',color:'#E8D8B0'}, 64:{name:'沼泽地',color:'#00FFFF'}, 65:{name:'裸土地',color:'#F0E0C0'}, 66:{name:'裸岩石',color:'#A0A0A0'} },
+            links: [
+                { label: '论文 (刘纪远 2014)', url: 'https://doi.org/10.11821/dlyj201401001' },
+                { label: '资源环境科学数据中心', url: 'https://www.resdc.cn/' }
+            ]
+        },
+        // ---- 美国/欧洲区域 ----
+        {
+            id: 'usgs_nlcd',
+            name: 'USGS NLCD',
+            fullName: '美国国家土地覆盖数据库',
+            source: 'USGS MRLC 联盟',
+            resolution: 30,
+            range: '美国', rangeType: 'usa',
+            years: { start: 2001, end: 2021 },
+            description: '美国最权威的30m土地覆盖产品，16类，含不透水面和树冠覆盖百分比。',
+            collection: 'USGS/NLCD/NLCD2021',
+            band: 'landcover',
+            filterType: 'fixed',
+            classes: { 11:{name:'开放水域',color:'#476ba1'}, 12:{name:'永久冰雪',color:'#d1def8'}, 21:{name:'开发-开放空间',color:'#ddc9c9'}, 22:{name:'开发-低密度',color:'#d89382'}, 23:{name:'开发-中密度',color:'#ed0000'}, 24:{name:'开发-高密度',color:'#cc0000'}, 31:{name:'裸地',color:'#b2adaa'}, 41:{name:'落叶林',color:'#68ab63'}, 42:{name:'常绿林',color:'#1c6330'}, 43:{name:'混合林',color:'#b5e3b5'}, 52:{name:'灌木',color:'#ccba7c'}, 71:{name:'草地',color:'#e2e2c1'}, 72:{name:'牧场',color:'#dcd939'}, 73:{name:'耕地',color:'#ab6c28'}, 90:{name:'木本湿地',color:'#b8d9eb'}, 95:{name:'草本湿地',color:'#6ba3d6'} },
+            links: [
+                { label: 'NLCD官方', url: 'https://www.mrlc.gov/' },
+                { label: '论文 (Jin 2019)', url: 'https://doi.org/10.1016/j.jag.2019.01.011' },
+                { label: 'GEE数据目录', url: 'https://developers.google.com/earth-engine/datasets/catalog/USGS_NLCD' }
+            ]
+        },
+        // ---- 粗分辨率长时序（公开可用） ----
+        {
+            id: 'cgls_lc100',
+            name: 'CGLS-LC100',
+            fullName: '哥白尼全球陆地服务100m土地覆盖',
+            source: 'Copernicus CGLS',
+            resolution: 100,
+            range: '全球', rangeType: 'global',
+            years: { start: 2015, end: 2019 },
+            description: '哥白尼计划官方100m土地覆盖产品，基于Proba-V卫星。',
+            collection: 'COPERNICUS/Landcover/100m/Proba-V-C3/Global',
+            band: 'discrete_classification',
+            filterType: 'yearEq',
+            classes: { 0:{name:'未分类',color:'#282828'}, 20:{name:'灌木',color:'#ffbb22'}, 30:{name:'草地',color:'#ffff4c'}, 40:{name:'耕地',color:'#f096ff'}, 50:{name:'建设用地',color:'#fa0000'}, 60:{name:'裸地',color:'#b4b4b4'}, 70:{name:'雪冰',color:'#f0f0f0'}, 80:{name:'水体',color:'#0064c8'}, 90:{name:'湿地',color:'#0096a0'}, 100:{name:'林地',color:'#00cf75'}, 111:{name:'常绿阔叶',color:'#006400'}, 112:{name:'落叶阔叶',color:'#00aa00'}, 113:{name:'常绿针叶',color:'#007800'}, 114:{name:'落叶针叶',color:'#009600'}, 115:{name:'混合林',color:'#285000'} },
+            links: [
+                { label: 'Copernicus数据', url: 'https://land.copernicus.eu/global/products/lc' },
+                { label: 'GEE数据目录', url: 'https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_Landcover_100m_Proba-V-C3_Global' }
+            ]
+        },
+        {
+            id: 'modis_lc',
+            name: 'MODIS MCD12Q1',
+            fullName: 'MODIS全球土地覆盖类型',
+            source: 'NASA / Boston University',
+            resolution: 500,
+            range: '全球', rangeType: 'global',
+            years: { start: 2001, end: 2023 },
+            description: '最长连续(2001至今)年度全球土地覆盖记录，5种分类方案(IGBP/UMD/PFT等)。',
+            collection: 'MODIS/061/MCD12Q1',
+            band: 'LC_Type1',
+            filterType: 'yearEq',
+            classes: { 0:{name:'水体',color:'#476ba1'}, 1:{name:'常绿针叶林',color:'#1c6330'}, 2:{name:'常绿阔叶林',color:'#006400'}, 3:{name:'落叶针叶林',color:'#009600'}, 4:{name:'落叶阔叶林',color:'#00a800'}, 5:{name:'混合林',color:'#285000'}, 6:{name:'封闭灌木',color:'#96ff50'}, 7:{name:'开放灌木',color:'#a8ff4e'}, 8:{name:'木本稀树草原',color:'#c8ff00'}, 9:{name:'稀树草原',color:'#d2ff00'}, 10:{name:'草地',color:'#ffff00'}, 11:{name:'永久湿地',color:'#00ffff'}, 12:{name:'耕地',color:'#f096ff'}, 13:{name:'城市',color:'#ff0000'}, 14:{name:'镶嵌植被',color:'#d2b48c'}, 15:{name:'雪冰',color:'#e0e0e0'}, 16:{name:'裸地',color:'#f5deb3'} },
+            links: [
+                { label: 'LP DAAC', url: 'https://lpdaac.usgs.gov/products/mcd12q1v061/' },
+                { label: '论文 (Friedl 2010)', url: 'https://doi.org/10.1016/j.rse.2009.09.005' },
+                { label: 'GEE数据目录', url: 'https://developers.google.com/earth-engine/datasets/catalog/MODIS_061_MCD12Q1' }
+            ]
+        },
+        {
+            id: 'esa_cci',
+            name: 'ESA CCI LC',
+            fullName: 'ESA气候变化倡议-土地覆盖',
+            source: 'ESA CCI / UCLouvain',
+            resolution: 300,
+            range: '全球', rangeType: 'global',
+            years: { start: 1992, end: 2020 },
+            description: '全球最长连续(1992-2020年逐年)土地覆盖记录，37类(LCCS标准)。需先在GEE中搜索 ESA CCI LC 并申请访问权限。',
+            collection: 'users/esa_cci/ESA_CCI_LC',
+            band: 'lccs_class',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 10:{name:'耕地-雨养',color:'#ffff00'}, 11:{name:'耕地-灌溉',color:'#cce800'}, 20:{name:'镶嵌耕地/自然',color:'#d2ff00'}, 30:{name:'镶嵌林地/耕地',color:'#006400'}, 40:{name:'镶嵌草地/耕地',color:'#c8ff00'}, 50:{name:'常绿阔叶林',color:'#006400'}, 60:{name:'落叶阔叶林',color:'#00a800'}, 70:{name:'常绿针叶林',color:'#007800'}, 80:{name:'落叶针叶林',color:'#009600'}, 90:{name:'混合林',color:'#285000'}, 100:{name:'封闭灌木',color:'#96ff50'}, 110:{name:'开放灌木',color:'#a8ff4e'}, 120:{name:'草地',color:'#c8ff00'}, 130:{name:'稀疏植被',color:'#d2b48c'}, 140:{name:'城市',color:'#ff0000'}, 150:{name:'雪冰',color:'#e0e0e0'}, 160:{name:'裸地',color:'#f5deb3'}, 170:{name:'永久水体',color:'#0040c0'}, 180:{name:'湿地',color:'#00ffff'} },
+            links: [
+                { label: '官方主页', url: 'https://www.esa-landcover-cci.org/' },
+                { label: 'Zenodo DOI', url: 'https://doi.org/10.5281/zenodo.5979832' },
+                { label: 'ESA CCI数据', url: 'https://climate.esa.int/en/esa-cci/esa-cci-land-cover/' }
+            ]
+        },
+        {
+            id: 'aglc',
+            name: 'AGLC',
+            fullName: '全球30m年度土地覆盖',
+            source: '中山大学',
+            resolution: 30,
+            range: '全球', rangeType: 'global',
+            years: { start: 2000, end: 2015 },
+            description: '中山大学发布的全球30m年度土地覆盖数据集。需先在GEE中搜索 AGLC 并申请访问权限。',
+            collection: 'projects/sat-io/open-datasets/AGLC',
+            band: 'landcover',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 1:{name:'耕地',color:'#ffff00'}, 2:{name:'林地',color:'#006400'}, 3:{name:'草地',color:'#c8ff00'}, 4:{name:'灌木',color:'#96ff50'}, 5:{name:'湿地',color:'#00ffff'}, 6:{name:'水体',color:'#0040c0'}, 7:{name:'建设用地',color:'#ff0000'}, 8:{name:'冰雪',color:'#e0e0e0'}, 9:{name:'裸地',color:'#d2b48c'} },
+            links: [
+                { label: 'GEE数据目录', url: 'https://developers.google.com/earth-engine/datasets/catalog/projects_sat-io_open-datasets_AGLC' }
+            ]
+        },
+        {
+            id: 'corine',
+            name: 'CORINE LC',
+            fullName: '欧洲协调环境信息计划土地覆盖',
+            source: '欧洲环境署 (EEA)',
+            resolution: 100,
+            range: '欧洲', rangeType: 'europe',
+            years: { start: 1990, end: 2018 },
+            description: '欧洲最权威的土地覆盖产品，6年一期(1990-2018)，44类精细编码。需先在GEE中搜索 CORINE LC 并申请访问权限。',
+            collection: 'users/eea/CORINE_LC',
+            band: 'landcover',
+            filterType: 'yearEq',
+            accessNote: '需申请',
+            classes: { 111:{name:'城市建成区',color:'#ff0000'}, 112:{name:'交通网络',color:'#cc0000'}, 121:{name:'工业商业',color:'#960050'}, 131:{name:'矿区',color:'#804000'}, 141:{name:'绿地',color:'#00ff80'}, 211:{name:'耕地',color:'#ffff00'}, 221:{name:'果园',color:'#ccff00'}, 231:{name:'牧场',color:'#ffcc00'}, 242:{name:'季节性耕地',color:'#cc9900'}, 243:{name:'农业-自然镶嵌',color:'#666600'}, 311:{name:'阔叶林',color:'#006400'}, 312:{name:'针叶林',color:'#004000'}, 313:{name:'混合林',color:'#00a800'}, 321:{name:'灌木',color:'#96ff50'}, 322:{name:'草地',color:'#c8ff00'}, 323:{name:'过渡林',color:'#285000'}, 324:{name:'过渡灌木',color:'#009600'}, 331:{name:'裸岩',color:'#b4b4b4'}, 332:{name:'裸地',color:'#d2b48c'}, 333:{name:'林火区',color:'#c8c8a0'}, 411:{name:'内陆湿地',color:'#00ffff'}, 421:{name:'潮间带湿地',color:'#00b4c8'}, 511:{name:'内陆水体',color:'#0040c0'}, 512:{name:'水体',color:'#0060c0'}, 521:{name:'海岸水体',color:'#0080c0'}, 523:{name:'海冰',color:'#a0e0ff'} },
+            links: [
+                { label: 'EEA数据门户', url: 'https://land.copernicus.eu/pan-european/corine-land-cover' },
+                { label: 'DOI (CLC2018)', url: 'https://doi.org/10.2760/06087' }
+            ]
+        }
+    ];
+
+    const DEM_DATASETS = {
+        srtm30: { id: 'USGS/SRTMGL1_003', name: 'SRTM 30m', band: 'elevation', useCollection: false, description: '2000年 shuttle 雷达地形任务，全球80%陆地，30m分辨率' },
+        srtm90: { id: 'USGS/SRTMGL1_003', name: 'SRTM 90m', band: 'elevation', useCollection: false, description: 'SRTM 30m 重采样至90m，适合大尺度分析' }
+    };
+
+    const PROVINCE_ADCODES = {
+        '北京':110000,'天津':120000,'河北':130000,'山西':140000,'内蒙古':150000,
+        '辽宁':210000,'吉林':220000,'黑龙江':230000,'上海':310000,'江苏':320000,
+        '浙江':330000,'安徽':340000,'福建':350000,'江西':360000,'山东':370000,
+        '河南':410000,'湖北':420000,'湖南':430000,'广东':440000,'广西':450000,
+        '海南':460000,'重庆':500000,'四川':510000,'贵州':520000,'云南':530000,
+        '西藏':540000,'陕西':610000,'甘肃':620000,'青海':630000,'宁夏':640000,
+        '新疆':650000,'香港':810000,'澳门':820000,'台湾':710000
+    };
+
+    const DATAV_BASE = 'https://geo.datav.aliyun.com/areas_v3/bound';
+
+    // ==================== 全局状态 ====================
+    let map, currentDataset = null, roiMode = 'draw', roiRectangle = null;
+    let roiBoundaryLayer = null, roiGeoJSON = null;
+
+    // ==================== 初始化 ====================
+    function init() {
+        document.getElementById('dsCount').textContent = DATASETS.length;
+        initMap();
+        populateDropdown();
+        initProvinceSelect();
+        bindEvents();
+    }
+
+    function initMap() {
+        map = L.map('map').setView([35, 105], 4);
+        var tk = 'fb4676cc4911f81c25f271bc8be8d162';
+        function tdTile(layer, key) {
+            return L.tileLayer(`https://t{s}.tianditu.gov.cn/${layer}_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${layer}&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${key}`, { subdomains: '01234567', maxZoom: 18 });
+        }
+        var vecBase = tdTile('vec', tk);
+        var vecAnno = tdTile('cva', tk);
+        var imgBase = tdTile('img', tk);
+        var imgAnno = tdTile('iva', tk);
+        var terBase = tdTile('ter', tk);
+        var terAnno = tdTile('tva', tk);
+
+        var vectorLayer = L.layerGroup([vecBase, vecAnno]);
+        var satelliteLayer = L.layerGroup([imgBase, imgAnno]);
+        var terrainLayer = L.layerGroup([terBase, terAnno]);
+
+        vectorLayer.addTo(map);
+        L.control.layers({
+            '矢量图': vectorLayer,
+            '影像图': satelliteLayer,
+            '地形图': terrainLayer
+        }, null, { position: 'topright' }).addTo(map);
+
+        map.on('mousedown', function(e) {
+            if (roiMode !== 'draw') return;
+            if (roiRectangle) map.removeLayer(roiRectangle);
+            var start = e.latlng;
+            function onMove(ev) {
+                if (roiRectangle) map.removeLayer(roiRectangle);
+                roiRectangle = L.rectangle([start, ev.latlng], {
+                    color: '#2e86c1', weight: 2, fillOpacity: 0.12, dashArray: '6,4'
+                }).addTo(map);
+            }
+            function onUp() {
+                map.off('mousemove', onMove);
+                map.off('mouseup', onUp);
+                updateExportBtn();
+                updateCodePreview();
+                showStatus('区域已选定');
+            }
+            map.on('mousemove', onMove);
+            map.on('mouseup', onUp);
+        });
+    }
+
+    function populateDropdown() {
+        const sel = document.getElementById('dsDropdown');
+        // 按 rangeType 分组
+        const groups = {};
+        DATASETS.forEach(ds => {
+            const label = ds.rangeType === 'global' ? '全球' : ds.rangeType === 'china' ? '中国' : ds.rangeType === 'usa' ? '美国' : '欧洲';
+            if (!groups[label]) groups[label] = [];
+            groups[label].push(ds);
+        });
+        Object.entries(groups).forEach(([group, items]) => {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = group + '数据集';
+            items.forEach(ds => {
+                const opt = document.createElement('option');
+                opt.value = ds.id;
+                opt.textContent = `${ds.name} (${ds.resolution}m, ${ds.years.start}-${ds.years.end})`;
+                optgroup.appendChild(opt);
+            });
+            sel.appendChild(optgroup);
+        });
+    }
+
+    function onDatasetChange(id) {
+        const container = document.getElementById('dsDetailContainer');
+        if (!id) {
+            container.innerHTML = '';
+            currentDataset = null;
+            updateExportBtn();
+            updateLegend();
+            return;
+        }
+        currentDataset = DATASETS.find(d => d.id === id);
+        renderDetailCard(currentDataset);
+        updateYearSelects();
+        updateLegend();
+        updateCodePreview();
+        updateExportBtn();
+        showStatus('已选择: ' + currentDataset.name);
+    }
+
+    function renderDetailCard(ds) {
+        const rangeBadgeClass = ds.rangeType === 'global' ? 'badge-global' : ds.rangeType === 'china' ? 'badge-china' : ds.rangeType === 'usa' ? 'badge-usa' : 'badge-europe';
+        const accessBadge = ds.accessNote ? `<span style="background:#fff7e6;color:#fa8c16;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:4px;">⚠️ ${ds.accessNote}</span>` : '';
+        const linksHtml = ds.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join('');
+        document.getElementById('dsDetailContainer').innerHTML = `
+            <div class="ds-detail-card active">
+                <div class="ds-detail-header">
+                    <div>
+                        <span class="ds-name">${ds.name}</span>
+                        <span class="ds-range-badge ${rangeBadgeClass}">${ds.range}</span>
+                        ${accessBadge}
+                    </div>
+                </div>
+                <div class="ds-detail-body">
+                    <div class="info-row"><span class="info-label">全称</span><span class="info-value">${ds.fullName}</span></div>
+                    <div class="info-row"><span class="info-label">来源</span><span class="info-value">${ds.source}</span></div>
+                    <div class="info-row"><span class="info-label">分辨率</span><span class="info-value">${ds.resolution}m</span></div>
+                    <div class="info-row"><span class="info-label">时间跨度</span><span class="info-value">${ds.years.start}—${ds.years.end}年</span></div>
+                    <div class="info-row"><span class="info-label">分类数</span><span class="info-value">${Object.keys(ds.classes).length} 类</span></div>
+                    <div class="info-row"><span class="info-label">GEE ID</span><span class="info-value" style="font-family:monospace;font-size:10px;word-break:break-all;">${ds.collection}</span></div>
+                    <div class="ds-desc">${ds.description}</div>
+                    ${ds.accessNote ? '<div style="background:#fff7e6;border:1px solid #ffd591;border-radius:4px;padding:6px 10px;margin-top:8px;font-size:11px;color:#ad6800;">此数据集需要在 <a href="https://code.earthengine.google.com/" target="_blank" style="color:#d46b08;">GEE Code Editor</a> 中搜索并申请访问权限后才能使用。</div>' : ''}
+                </div>
+                <div class="ds-detail-links">${linksHtml}</div>
+            </div>
+        `;
+    }
+
+    function updateYearSelects() {
+        const ds = currentDataset;
+        if (!ds) return;
+        const startY = document.getElementById('startYear');
+        const endY = document.getElementById('endYear');
+        const years = [];
+        for (let y = ds.years.start; y <= ds.years.end; y++) years.push(y);
+        startY.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+        endY.innerHTML = years.map(y => `<option value="${y}" ${y === ds.years.end ? 'selected' : ''}>${y}</option>`).join('');
+    }
+
+    function updateLegend() {
+        const panel = document.getElementById('legendPanel');
+        const content = document.getElementById('legendContent');
+        const title = document.getElementById('legendTitle');
+        if (!currentDataset) { panel.style.display = 'none'; return; }
+        panel.style.display = 'block';
+        title.textContent = currentDataset.name + ' 图例';
+        content.innerHTML = Object.entries(currentDataset.classes).map(([code, info]) =>
+            `<div class="legend-item"><div class="legend-color" style="background:${info.color}"></div><span>${code}: ${info.name}</span></div>`
+        ).join('');
+    }
+
+    function setROI(mode, btn) {
+        roiMode = mode;
+        document.querySelectorAll('.roi-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('roiProvinceWrap').style.display = mode === 'province' ? 'block' : 'none';
+        document.getElementById('roiCityWrap').style.display = mode === 'city' ? 'block' : 'none';
+        document.getElementById('roiCountyWrap').style.display = mode === 'county' ? 'block' : 'none';
+        document.getElementById('roiCountryWrap').style.display = mode === 'country' ? 'block' : 'none';
+        document.getElementById('roiDrawHint').style.display = mode === 'draw' ? 'block' : 'none';
+        if (roiRectangle) { map.removeLayer(roiRectangle); roiRectangle = null; }
+        if (roiBoundaryLayer) { map.removeLayer(roiBoundaryLayer); roiBoundaryLayer = null; roiGeoJSON = null; }
+        if (mode === 'province') initProvinceSelect();
+        if (mode === 'city') initCityProvinceSelect();
+        if (mode === 'county') initCountyProvinceSelect();
+        updateExportBtn();
+        updateCodePreview();
+    }
+
+    function populateProvinceSelect(sel) {
+        sel.innerHTML = '<option value="">-- 请选择省份 --</option>';
+        Object.entries(PROVINCE_ADCODES).forEach(([name, code]) => {
+            sel.innerHTML += `<option value="${code}">${name}</option>`;
+        });
+    }
+
+    function initProvinceSelect() { populateProvinceSelect(document.getElementById('provinceSelect')); }
+    function initCityProvinceSelect() { populateProvinceSelect(document.getElementById('cityProvinceSelect')); }
+    function initCountyProvinceSelect() { populateProvinceSelect(document.getElementById('countyProvinceSelect')); }
+
+    async function loadCities(adcode, targetId) {
+        const sel = document.getElementById(targetId || 'citySelect');
+        sel.innerHTML = '<option value="">加载中...</option>';
+        try {
+            const resp = await fetch(`${DATAV_BASE}/${adcode}_full.json`);
+            const geojson = await resp.json();
+            sel.innerHTML = '<option value="">-- 请选择城市 --</option>';
+            geojson.features.forEach(f => {
+                sel.innerHTML += `<option value="${f.properties.adcode}">${f.properties.name}</option>`;
+            });
+        } catch (e) {
+            sel.innerHTML = '<option value="">加载失败</option>';
+        }
+    }
+
+    async function loadCounties(adcode) {
+        const sel = document.getElementById('countySelect');
+        sel.innerHTML = '<option value="">加载中...</option>';
+        try {
+            const resp = await fetch(`${DATAV_BASE}/${adcode}_full.json`);
+            const geojson = await resp.json();
+            sel.innerHTML = '<option value="">-- 请选择县区 --</option>';
+            geojson.features.forEach(f => {
+                sel.innerHTML += `<option value="${f.properties.adcode}">${f.properties.name}</option>`;
+            });
+        } catch (e) {
+            sel.innerHTML = '<option value="">加载失败</option>';
+        }
+    }
+
+    async function showBoundary(adcode) {
+        if (roiBoundaryLayer) { map.removeLayer(roiBoundaryLayer); }
+        try {
+            const resp = await fetch(`${DATAV_BASE}/${adcode}.json`);
+            const geojson = await resp.json();
+            roiGeoJSON = geojson;
+            roiBoundaryLayer = L.geoJSON(geojson, {
+                color: '#2e86c1', weight: 2, fillOpacity: 0.1, dashArray: '6,4'
+            }).addTo(map);
+            map.fitBounds(roiBoundaryLayer.getBounds(), { padding: [30, 30] });
+        } catch (e) {
+            showToast('加载边界失败', 'error');
+        }
+    }
+
+    function onProvinceChange() {
+        const adcode = document.getElementById('provinceSelect').value;
+        if (adcode) showBoundary(adcode);
+        updateExportBtn(); updateCodePreview();
+    }
+
+    function onCityProvinceChange() {
+        const adcode = document.getElementById('cityProvinceSelect').value;
+        if (adcode) {
+            loadCities(adcode);
+            document.getElementById('citySelect').innerHTML = '<option value="">-- 请先选择城市 --</option>';
+            showBoundary(adcode);
+        }
+        updateExportBtn(); updateCodePreview();
+    }
+
+    function onCityChange() {
+        const adcode = document.getElementById('citySelect').value;
+        if (adcode) showBoundary(adcode);
+        updateExportBtn(); updateCodePreview();
+    }
+
+    function onCountyProvinceChange() {
+        const adcode = document.getElementById('countyProvinceSelect').value;
+        if (adcode) {
+            loadCities(adcode, 'countyCitySelect');
+            document.getElementById('countySelect').innerHTML = '<option value="">-- 请先选择城市 --</option>';
+            showBoundary(adcode);
+        }
+        updateExportBtn(); updateCodePreview();
+    }
+
+    function onCountyCityChange() {
+        const adcode = document.getElementById('countyCitySelect').value;
+        if (adcode) {
+            loadCounties(adcode);
+            showBoundary(adcode);
+        }
+        updateExportBtn(); updateCodePreview();
+    }
+
+    function onCountyChange() {
+        const adcode = document.getElementById('countySelect').value;
+        if (adcode) showBoundary(adcode);
+        updateExportBtn(); updateCodePreview();
+    }
+
+    function updateExportBtn() {
+        document.getElementById('exportBtn').disabled = !currentDataset;
+    }
+
+    // ==================== GEE 代码生成 ====================
+    function generateCode() {
+        if (!currentDataset) return '// 请先选择数据集';
+        const ds = currentDataset;
+        const sy = parseInt(document.getElementById('startYear').value);
+        const ey = parseInt(document.getElementById('endYear').value);
+        const scale = document.getElementById('outputScale').value;
+        const crs = document.getElementById('outputCRS').value;
+        const folder = document.getElementById('driveFolder').value;
+        const annual = document.getElementById('annualExport').checked;
+
+        let roiCode = '';
+        if (roiMode === 'draw' && roiRectangle) {
+            const b = roiRectangle.getBounds();
+            roiCode = `var roi = ee.Geometry.Rectangle([${b.getWest().toFixed(4)}, ${b.getSouth().toFixed(4)}, ${b.getEast().toFixed(4)}, ${b.getNorth().toFixed(4)}]);`;
+        } else if (roiMode === 'province') {
+            const name = document.getElementById('provinceSelect').selectedOptions[0]?.text || '';
+            const adcode = document.getElementById('provinceSelect').value;
+            if (roiGeoJSON) {
+                roiCode = `var roi = ee.Geometry(${JSON.stringify(roiGeoJSON.features[0].geometry).replace(/"/g, "'")});`;
+            } else {
+                roiCode = `var roi = ee.FeatureCollection("FAO/GAUL/2015/level1")
+  .filter(ee.Filter.eq('ADM1_NAME', '${name}')).geometry();`;
+            }
+        } else if (roiMode === 'city') {
+            const name = document.getElementById('citySelect').selectedOptions[0]?.text || '';
+            if (roiGeoJSON) {
+                roiCode = `var roi = ee.Geometry(${JSON.stringify(roiGeoJSON.features[0].geometry).replace(/"/g, "'")});`;
+            } else {
+                roiCode = `// 市级区域: ${name}\nvar roi = ee.FeatureCollection("FAO/GAUL/2015/level2")
+  .filter(ee.Filter.eq('ADM2_NAME', '${name}')).geometry();`;
+            }
+        } else if (roiMode === 'county') {
+            const name = document.getElementById('countySelect').selectedOptions[0]?.text || '';
+            if (roiGeoJSON) {
+                roiCode = `var roi = ee.Geometry(${JSON.stringify(roiGeoJSON.features[0].geometry).replace(/"/g, "'")});`;
+            } else {
+                roiCode = `// 县区级区域: ${name}\nvar roi = ee.FeatureCollection("FAO/GAUL/2015/level2")
+  .filter(ee.Filter.eq('ADM2_NAME', '${name}')).geometry();`;
+            }
+        } else if (roiMode === 'country') {
+            roiCode = `var roi = ee.FeatureCollection("FAO/GAUL/2015/level0")
+  .filter(ee.Filter.eq('ADM0_NAME', '${document.getElementById('countrySelect').value}')).geometry();`;
+        } else {
+            roiCode = `var roi = ee.Geometry.Rectangle([-180, -60, 180, 85]);`;
+        }
+
+        // 根据 filterType 生成过滤和导出代码
+        let filterSnippet = '', yearLoopFilter = '';
+        if (ds.filterType === 'dateRange') {
+            filterSnippet = `.filterDate('${sy}-01-01', '${ey}-12-31')`;
+            yearLoopFilter = `.filterDate(year + '-01-01', year + '-12-31')`;
+        } else if (ds.filterType === 'yearEq') {
+            filterSnippet = `.filter(ee.Filter.eq('year', ${ey}))`;
+            yearLoopFilter = `.filter(ee.Filter.eq('year', year))`;
+        } else { // fixed
+            filterSnippet = '';
+            yearLoopFilter = '';
+        }
+
+        let exportCode = '';
+        if (annual && ds.filterType !== 'fixed') {
+            exportCode = `\n// 逐年导出\nfor (var year = ${sy}; year <= ${ey}; year++) {
+  var img = collection${yearLoopFilter}.mosaic().select('${ds.band}').toInt().clip(roi);
+  Export.image.toDrive({
+    image: img,
+    description: '${ds.name}_' + year,
+    folder: '${folder}',
+    fileNamePrefix: '${ds.name}_' + year,
+    region: roi,
+    scale: ${scale},
+    crs: '${crs}',
+    maxPixels: 1e13
+  });
+}`;
+        } else if (ds.filterType === 'fixed') {
+            exportCode = `\n// 导出（该数据集仅支持固定期相）\nExport.image.toDrive({
+  image: image,
+  description: '${ds.name}_${ey}',
+  folder: '${folder}',
+  fileNamePrefix: '${ds.name}_${ey}',
+  region: roi,
+  scale: ${scale},
+  crs: '${crs}',
+  maxPixels: 1e13
+});`;
+        } else {
+            exportCode = `\n// 导出\nExport.image.toDrive({
+  image: image,
+  description: '${ds.name}_${ey}',
+  folder: '${folder}',
+  fileNamePrefix: '${ds.name}_${ey}',
+  region: roi,
+  scale: ${scale},
+  crs: '${crs}',
+  maxPixels: 1e13
+});`;
+        }
+
+        const classJson = JSON.stringify(Object.fromEntries(Object.entries(ds.classes).map(([k,v])=>[parseInt(k),v.name])), null, 2).replace(/"/g, "'");
+        const palette = Object.values(ds.classes).map(c => c.color).join(', ');
+
+        let datasetCode;
+        if (ds.filterType === 'fixed') {
+            datasetCode = `var collection = ee.ImageCollection("${ds.collection}");\nvar image = collection.first().select('${ds.band}').toInt().clip(roi);`;
+        } else if (ds.filterType === 'dateRange') {
+            datasetCode = `var collection = ee.ImageCollection("${ds.collection}");\nvar image = collection${filterSnippet}.mosaic().select('${ds.band}').toInt().clip(roi);`;
+        } else {
+            datasetCode = `var collection = ee.ImageCollection("${ds.collection}");\nvar image = collection${filterSnippet}.mosaic().select('${ds.band}').toInt().clip(roi);`;
+        }
+
+        const enableDEM = document.getElementById('enableDEM').checked;
+        const demKey = document.getElementById('demDataset').value;
+        const demScaleVal = document.getElementById('demScale').value;
+        const demInfo = enableDEM ? DEM_DATASETS[demKey] : null;
+
+        let demExportCode = '';
+        if (enableDEM && demInfo) {
+            const demLoadCode = demInfo.useCollection
+                ? `var demCollection = ee.ImageCollection("${demInfo.id}");\nvar dem = demCollection.first().select('${demInfo.band}').clip(roi);`
+                : `var dem = ee.Image("${demInfo.id}").select('${demInfo.band}').clip(roi);`;
+            demExportCode = `
+// === DEM 地形数据 ===
+${demLoadCode}
+Map.addLayer(dem, {min: 0, max: 3000, palette: ['#00ff00','#ffff00','#ff0000']}, 'DEM', false);
+Export.image.toDrive({
+  image: dem,
+  description: '${demInfo.name.replace(/\s+/g,'_')}',
+  folder: '${folder}',
+  fileNamePrefix: '${demInfo.name.replace(/\s+/g,'_')}',
+  region: roi,
+  scale: ${demScaleVal},
+  crs: '${crs}',
+  maxPixels: 1e13
+});`;
+        }
+
+        return `// ==========================================
+// ${ds.fullName}
+// 来源: ${ds.source} | ${ds.resolution}m | ${ds.years.start}-${ds.years.end}
+// GEE Collection: ${ds.collection}
+// 生成时间: ${new Date().toLocaleString('zh-CN')}
+// ==========================================
+// --- 研究区域 ---
+${roiCode}
+
+${datasetCode}
+
+// --- 可视化配色 ---
+var visParams = {min: 0, max: ${Math.max(...Object.keys(ds.classes).map(Number))}, palette: [${palette.split(', ').map(c => "'" + c + "'").join(', ')}]};
+
+// --- 可视化 ---
+Map.centerObject(roi, 6);
+Map.addLayer(roi, {color: 'red'}, '研究区域');
+Map.addLayer(image, visParams, '${ds.name}');
+${exportCode}
+${demExportCode}
+
+// --- 分类编码映射 ---
+var classMapping = ${classJson};
+print('分类体系:', classMapping);
+print('✅ 完成！点击 Tasks 面板启动导出。');`;
+    }
+
+    function updateCodePreview() {
+        document.getElementById('codePreview').textContent = generateCode();
+    }
+
+    function copyCode() {
+        navigator.clipboard.writeText(generateCode()).then(() => showToast('代码已复制'));
+    }
+
+    function showGuideModal() {
+        document.getElementById('loginReminder').style.display = 'flex';
+    }
+
+    function closeGuideModal() {
+        document.getElementById('loginReminder').style.display = 'none';
+    }
+
+    function startExport() {
+        if (!currentDataset) { showToast('请先选择数据集', 'error'); return; }
+        navigator.clipboard.writeText(generateCode()).then(() => {
+            showToast('代码已复制到剪贴板');
+            showGuideModal();
+        }).catch(() => {
+            showToast('复制失败，请手动复制代码', 'error');
+            showGuideModal();
+        });
+    }
+
+    // ==================== UI 辅助 ====================
+    function togglePanel(header) {
+        header.classList.toggle('collapsed');
+        header.nextElementSibling.classList.toggle('collapsed-body');
+    }
+
+    function showStatus(msg) {
+        const bar = document.getElementById('statusBar');
+        bar.textContent = msg;
+        bar.classList.add('show');
+        setTimeout(() => bar.classList.remove('show'), 3000);
+    }
+
+    function showToast(msg, type) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show' + (type === 'error' ? ' error' : '');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function onDEMChange() {
+        const checked = document.getElementById('enableDEM').checked;
+        document.getElementById('demOptions').style.display = checked ? 'block' : 'none';
+        updateCodePreview();
+    }
+
+    function bindEvents() {
+        ['startYear','endYear','outputScale','outputCRS','driveFolder','annualExport','provinceSelect','countrySelect','demDataset','demScale'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => {
+                if (id === 'startYear') {
+                    const es = document.getElementById('endYear');
+                    if (parseInt(document.getElementById('startYear').value) > parseInt(es.value)) es.value = document.getElementById('startYear').value;
+                }
+                updateCodePreview();
+            });
+        });
+    }
+
+    init();
+    </script>
+</body>
+</html>
