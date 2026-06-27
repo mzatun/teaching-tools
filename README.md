@@ -28,6 +28,11 @@ teaching-tools/
 │   ├── resume-evaluator.zip
 │   ├── tutorial-to-logic.zip
 │   └── research全能助手.zip
+├── gee-landuse-downloader/         # GEE 土地利用数据集下载工具
+│   ├── README.md                   # 工具说明
+│   ├── index.html                  # 主程序（单文件应用）
+│   ├── 用户使用手册.md              # 详细操作指南
+│   └── 教程方案.md                  # 数据集技术文档
 └── ArcPy脚本实例/                # （待上传）
 ```
 
@@ -45,6 +50,7 @@ teaching-tools/
 | **简历评估助手** | WorkBuddy Skill | 学生简历解析与评估报告生成 | ✅ 完整 |
 | **教程逻辑化讲解** | WorkBuddy Skill | 软件操作教程转结构化讲解页面 | ✅ 完整 |
 | **科研全能助手** | WorkBuddy Skill | 论文复现/代码调试/数据分析/写作全流程 | ✅ 完整 |
+| **GEE 土地利用数据下载工具** | 单文件 HTML | 15个LULC数据集一键下载 + GEE代码自动生成 | ✅ 完整 |
 
 ---
 
