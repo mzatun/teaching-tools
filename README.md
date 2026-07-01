@@ -20,14 +20,15 @@ teaching-tools/
 │   ├── 01-需求分析.md ~ 08-部署文档.md
 │   ├── src/                       # Express.js 前后端源码
 │   └── 题目库-完整版.json
-├── 教学相长技能包/                # WorkBuddy 教学技能包（6个）
+├── 教学相长技能包/                # WorkBuddy 教学技能包（7个）
 │   ├── README.md                  # 技能包说明文档
 │   ├── jiaying-syllabus-generator.zip
 │   ├── arcpy-course-notes.zip
 │   ├── thesis-proposal-review.zip
 │   ├── resume-evaluator.zip
 │   ├── tutorial-to-logic.zip
-│   └── research全能助手.zip
+│   ├── research全能助手.zip
+│   └── knowledge-graph-skill.zip
 ├── gee-landuse-downloader/         # GEE 土地利用数据集下载工具
 │   ├── README.md                   # 工具说明
 │   ├── index.html                  # 主程序（单文件应用）
@@ -51,6 +52,7 @@ teaching-tools/
 | **教程逻辑化讲解** | WorkBuddy Skill | 软件操作教程转结构化讲解页面 | ✅ 完整 |
 | **科研全能助手** | WorkBuddy Skill | 论文复现/代码调试/数据分析/写作全流程 | ✅ 完整 |
 | **GEE 土地利用数据下载工具** | 单文件 HTML | 15个LULC数据集一键下载 + GEE代码自动生成 | ✅ 完整 |
+| **知识图谱生成器** | WorkBuddy Skill | JSON结构化知识点转 D3.js 交互式知识图谱 | ✅ 完整 |
 
 ---
 
@@ -124,4 +126,4 @@ Tools in this repository are for educational purposes only.
 
 ---
 
-*最后更新：2026-06-25*
+*最后更新：2026-07-01*
