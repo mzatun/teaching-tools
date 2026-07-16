@@ -20,7 +20,7 @@ teaching-tools/
 │   ├── 01-需求分析.md ~ 08-部署文档.md
 │   ├── src/                       # Express.js 前后端源码
 │   └── 题目库-完整版.json
-├── 教学相长技能包/                # WorkBuddy 教学技能包（7个）
+├── 教学相长技能包/                # WorkBuddy 教学技能包（17个）
 │   ├── README.md                  # 技能包说明文档
 │   ├── jiaying-syllabus-generator.zip
 │   ├── arcpy-course-notes.zip
@@ -28,7 +28,17 @@ teaching-tools/
 │   ├── resume-evaluator.zip
 │   ├── tutorial-to-logic.zip
 │   ├── research全能助手.zip
-│   └── knowledge-graph-skill.zip
+│   ├── knowledge-graph-skill.zip
+│   ├── course-review-kit.zip
+│   ├── paper-visual-abstract.zip
+│   ├── diagram-figure-toolkit.zip
+│   ├── docx-template-generator.zip
+│   ├── arcpy-analysis-toolbox-dev.zip
+│   ├── arcpy-arcgis-pro-plugin-generator.zip
+│   ├── cloud-platform-urban-center-replication.zip
+│   ├── cv-model-solution.zip
+│   ├── smart-city-dual-expert.zip
+│   └── post-ai-diagnosis.zip
 ├── gee-landuse-downloader/         # GEE 土地利用数据集下载工具
 │   ├── README.md                   # 工具说明
 │   ├── index.html                  # 主程序（单文件应用）
@@ -58,6 +68,16 @@ teaching-tools/
 | **科研全能助手** | WorkBuddy Skill | 论文复现/代码调试/数据分析/写作全流程 | ✅ 完整 |
 | **GEE 土地利用数据下载工具** | 单文件 HTML | 15个LULC数据集一键下载 + GEE代码自动生成 | ✅ 完整 |
 | **知识图谱生成器** | WorkBuddy Skill | JSON结构化知识点转 D3.js 交互式知识图谱 | ✅ 完整 |
+| **课程复习资料制作** | WorkBuddy Skill | 课件转多巴胺手绘风 HTML 笔记 + 动画 + 练习题 | ✅ 完整 |
+| **论文可视摘要生成** | WorkBuddy Skill | 论文链接/文本转单文件 HTML 可视摘要 | ✅ 完整 |
+| **图表配图工具包** | WorkBuddy Skill | 论文/报告/文档/手册配图统一工具包 | ✅ 完整 |
+| **Word 模板报告生成** | WorkBuddy Skill | 按 Word 模板占位符自动填充生成报告 | ✅ 完整 |
+| **ArcPy 工具箱全链路开发** | WorkBuddy Skill | 推文教程 → 工具箱 → 实验套件三阶段开发 | ✅ 完整 |
+| **ArcGIS Pro 脚本插件生成** | WorkBuddy Skill | 根据 GIS 需求生成 ArcGIS Pro 脚本插件包 | ✅ 完整 |
+| **三云平台方法论复现引擎** | WorkBuddy Skill | GEE/PIE/OGE 三平台方法论文复现 | ✅ 完整 |
+| **计算机视觉模型方案** | WorkBuddy Skill | 学术前沿 + 工程落地双轨 CV 方案生成 | ✅ 完整 |
+| **智慧城市双师型专家** | WorkBuddy Skill | 智慧城市/空间规划/城市科学双师咨询 | ✅ 完整 |
+| **岗位 AI 驾驭诊断** | WorkBuddy Skill | 企业岗位 AI 能力诊断报告 | ✅ 完整 |
 
 ---
 
@@ -146,4 +166,4 @@ Tools in this repository are for educational purposes only.
 
 ---
 
-*最后更新：2026-07-09*
+*最后更新：2026-07-17*
